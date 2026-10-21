@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beastmaster — FFXIV Job Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* parchment + ink, sampled from the in-game XBM windows */
+      --paper:        #ddd7ca;
+      --paper-dark:   #cdc3ae;
+      --paper-edge:   #a3957b;
+      --ink:          #3f3326;
+      --ink-soft:     #6c5d4c;
+      --ink-faint:    #978873;
+      --title:        #86652a;
+      --gold-line:    #b8923e;
+      --red:          #b3352b;
+      --select:       #e9d2a8;
+
+      --rampant:  #d8514a;
+      --durant:   #3b9fd1;
+      --eldritch: #c9a227;
+      --volant:   #3fae62;
+
+      /* 9-slice source slices (hr1 px) and on-screen scale */
+      --frame-scale: 0.45;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans', 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 0%, rgba(98, 120, 70, .55), transparent 70%),
+        radial-gradient(ellipse 70% 60% at 100% 100%, rgba(92, 66, 40, .6), transparent 70%),
+        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(60, 80, 50, .35), transparent 70%),
+        #1e241b;
+      background-attachment: fixed;
+    }
+
+    img { display: block; }
+
+    /* ─── In-game window frames (CSS border-image 9-slice) ─────────── */
+    .window {
+      position: relative;
+      border: 0 solid transparent;
+      border-image-source: url(assets/ui/window-hud.png);
+      border-image-slice: 274 290 270 288 fill;
+      border-image-width: calc(274px * var(--frame-scale)) calc(290px * var(--frame-scale))
+                          calc(270px * var(--frame-scale)) calc(288px * var(--frame-scale));
+      border-image-repeat: stretch;
+      padding: 30px 34px 34px;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .45));
+    }
+    .window.note {
+      border-image-source: url(assets/ui/window-note.png);
+    }
+    .window.paper {
+      border-image-source: url(assets/ui/window-shop.png);
+      border-image-slice: 228 248 220 248 fill;
+      border-image-width: calc(228px * var(--frame-scale)) calc(248px * var(--frame-scale))
+                          calc(220px * var(--frame-scale)) calc(248px * var(--frame-scale));
+      padding: 22px 24px 24px;
+    }
+
+    .win-title {
+      display: flex;
+      align-items: flex-end;
+      gap: .75rem;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 1.45rem;
+      line-height: 1.1;
+      color: var(--title);
+      padding: 0 2px 5px;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .55);
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--gold-line), rgba(184, 146, 62, .5) 70%, rgba(184, 146, 62, 0)) 1;
+    }
+    .win-title .count {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      margin-left: auto;
+    }
+
+    h3.sub {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: var(--title);
+      margin: 18px 0 8px;
+    }
+
+    p.lead { color: var(--ink); max-width: 72ch; }
+    p.note { color: var(--ink-soft); font-size: .85rem; }
+    strong { font-weight: 700; color: #2e241a; }
+
+    /* ─── Buttons / pills (in-game capsule buttons) ───────────────── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .82rem;
+      color: #f4ecdc;
+      padding: 2px 14px 3px;
+      border-radius: 999px;
+      border: 1px solid #3a2f25;
+      background: linear-gradient(#8b7967, #5f5042 55%, #54463a);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 1px 2px rgba(0, 0, 0, .35);
+      text-shadow: 0 1px 1px rgba(0, 0, 0, .5);
+      white-space: nowrap;
+    }
+    .pill.gold {
+      color: #3a2808;
+      text-shadow: 0 1px 0 rgba(255, 245, 200, .6);
+      border-color: #8a6420;
+      background: linear-gradient(#fff0b8, #e9c469 45%, #c7962f);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 1px 3px rgba(0, 0, 0, .4);
+      font-size: .95rem;
+      padding: 5px 44px 6px;
+    }
+    .pill.select {
+      background: linear-gradient(#77726b, #55514b);
+      border-color: #37332f;
+      min-width: 180px;
+      justify-content: flex-start;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────────── */
+    .shell {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 22px;
+      max-width: 2200px;
+      margin: 0 auto;
+      padding: 22px 18px 40px;
+      align-items: start;
+    }
+    .content { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+    /* ─── Side nav, styled like "Board Selection" ─────────────────── */
+    .side {
+      position: sticky;
+      top: 16px;
+    }
+    .side .window { min-height: 420px; }
+    .side nav { display: flex; flex-direction: column; }
+    .side nav a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1.02rem;
+      padding: 5px 10px;
+      border-radius: 2px;
+      transition: background .15s;
+    }
+    .side nav a:hover { background: linear-gradient(90deg, rgba(233, 210, 168, .6), rgba(233, 210, 168, 0)); }
+    .side nav a.active { background: linear-gradient(90deg, var(--select) 0%, var(--select) 70%, rgba(233, 210, 168, 0)); }
+    .side .job-mini {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 18px; padding-top: 12px;
+      border-top: 1px solid rgba(163, 149, 123, .6);
+      font-size: .8rem; color: var(--ink-soft);
+    }
+    .side .job-mini img { width: 34px; height: 34px; }
+
+    /* ─── Hero ───────────────────────────────────────────────────── */
+    .hero { position: relative; display: flex; align-items: center; gap: 26px; overflow: hidden; margin-bottom: 16px; }
+    .hero .crest { width: 132px; height: auto; flex-shrink: 0; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+    .hero h1 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 2.7rem;
+      line-height: 1;
+      color: var(--title);
+      letter-spacing: .02em;
+      text-shadow: 0 1px 0 rgba(255,255,255,.6);
+    }
+    .hero .subtitle { color: var(--ink-soft); margin-top: 6px; }
+    .hero .axe {
+      position: absolute; right: 30px; top: 50%;
+      width: 230px; transform: translateY(-50%) rotate(8deg);
+      opacity: .22; pointer-events: none;
+    }
+
+    /* ─── "Board Layout" move rows (also used for <details>) ──────── */
+    .move {
+      position: relative;
+      background: linear-gradient(#d3c9b4, #c9bea6);
+      border: 1px solid #a8997d;
+      border-radius: 5px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(120, 100, 70, .15);
+      margin-bottom: 7px;
+      overflow: hidden;
+    }
+    .move-head {
+      font-size: .82rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(60, 40, 20, .7);
+      padding: 2px 10px;
+      background: url(assets/ui/row-header.png) left center / 100% 100% no-repeat;
+      background-size: min(100%, 460px) 100%;
+    }
+    .move-body {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px 10px;
+      min-height: 56px;
+    }
+    .move-body > img { width: 46px; height: 46px; flex-shrink: 0; filter: drop-shadow(0 2px 2px rgba(0,0,0,.3)); }
+    .move-body .txt { flex: 1; }
+    .move-body .txt small { display: block; color: var(--ink-soft); font-size: .8rem; }
+
+    details.move > summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      padding-bottom: 12px;
+    }
+    details.move > summary::-webkit-details-marker { display: none; }
+    details.move > summary::after {
+      content: "";
+      position: absolute;
+      left: 50%; bottom: 3px;
+      width: 24px; height: 13px;
+      transform: translateX(-50%);
+      background: url(assets/ui/chevron.png) center / contain no-repeat;
+      transition: transform .2s;
+    }
+    details.move[open] > summary::after { transform: translateX(-50%) rotate(180deg); }
+    details.move > summary:hover .move-body { background: rgba(255, 255, 255, .15); }
+    .move-detail {
+      padding: 12px 16px 16px;
+      background: rgba(245, 240, 228, .55);
+      border-top: 1px solid #b3a58a;
+    }
+
+    /* ─── Icy-Veins-style item cards ──────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      position: relative;
+      background: linear-gradient(#cbbfa6, #bfb296);
+      border: 1px solid #8f8166;
+      border-radius: 4px;
+      padding: 12px 14px 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 1px 2px rgba(0,0,0,.2);
+      overflow: hidden;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      right: 6px; bottom: 6px;
+      width: 46px; height: 44px;
+      background: url(assets/ui/paw.png) center / contain no-repeat;
+      opacity: .45;
+      pointer-events: none;
+    }
+    .card-head { display: flex; align-items: center; gap: 12px; }
+    .card-head img {
+      width: 44px; height: 44px; border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.45);
+    }
+    .card-name { font-weight: 700; color: #2c2218; line-height: 1.25; }
+    .card-type {
+      display: block;
+      font-size: .74rem;
+      font-weight: 600;
+      color: var(--red);
+      text-shadow: 0 0 6px rgba(255, 190, 170, .55);
+    }
+    .card-level { font-size: .72rem; color: var(--ink-soft); font-weight: 400; margin-left: 4px; }
+    .card hr { border: 0; height: 1px; background: #8f8166; margin: 10px 0 8px; box-shadow: 0 1px 0 rgba(255,255,255,.3); }
+    .card p { font-size: .84rem; color: #3b3025; padding-right: 30px; }
+    .card .potency { margin-top: 6px; font-size: .8rem; color: var(--ink-soft); }
+    .card .potency b { color: #2c2218; }
+
+    /* ─── Gauge ───────────────────────────────────────────────────── */
+    .gauge-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .gauge-panel { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .gauge-panel .emblem { width: 230px; filter: drop-shadow(0 3px 5px rgba(0,0,0,.4)); }
+
+    .xbar {
+      position: relative;
+      width: 270px;
+      aspect-ratio: 367 / 50;
+    }
+    .xbar .fill {
+      position: absolute;
+      left: 3%; top: 22%; height: 56%;
+      width: calc(89.4% * var(--p));
+      background: left center / auto 100% no-repeat;
+    }
+    .xbar.tp  .fill { background-image: url(assets/ui/bar-tp.png); }
+    .xbar.ftp .fill { background-image: url(assets/ui/bar-ftp.png); }
+    .xbar::before {
+      content: ""; position: absolute; left: 3%; top: 22%; width: 89.4%; height: 56%;
+      background: url(assets/ui/bar-empty.png) left center / 100% 100%;
+    }
+    .xbar::after {
+      content: ""; position: absolute; inset: 0;
+      background: url(assets/ui/bar-frame.png) center / 100% 100% no-repeat;
+    }
+    .bar-label { display: flex; justify-content: space-between; width: 270px; font-size: .8rem; color: var(--ink-soft); margin-bottom: -4px; }
+
+    .wheel {
+      position: relative;
+      width: 250px; height: 250px;
+      margin: 4px auto 0;
+    }
+    .wheel svg { position: absolute; inset: 0; }
+    .wheel .med {
+      position: absolute;
+      width: 78px; text-align: center;
+      font-family: 'Oswald', sans-serif; font-size: .82rem; color: var(--ink);
+    }
+    .wheel .med img { width: 64px; height: 64px; margin: 0 auto; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+    .wheel .n { left: 86px; top: -6px; }
+    .wheel .e { right: -8px; top: 82px; }
+    .wheel .s { left: 86px; bottom: -14px; }
+    .wheel .w { left: -8px; top: 82px; }
+
+    /* ─── Crucible of the Unbroken (interactive boards) ───────────── */
+    .board-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .board-tabs button[aria-pressed="true"] {
+      color: #3a2808; text-shadow: 0 1px 0 rgba(255,245,200,.6); border-color: #8a6420;
+      background: linear-gradient(#fff0b8, #e9c469 45%, #c7962f);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 1px 3px rgba(0,0,0,.4);
+    }
+    .board-tabs button { padding: 4px 18px 5px; font-size: .88rem; }
+
+    /* wide: list | map | details; medium: list | map over details; narrow: stacked */
+    .crucible, .planner { display: grid; gap: 22px; align-items: start; }
+    .crucible {
+      grid-template-columns: minmax(260px, 360px) minmax(0, 640px) minmax(0, 1fr);
+      grid-template-areas: "side map detail";
+    }
+    .planner {
+      grid-template-columns: minmax(300px, 1fr) minmax(340px, 1fr) minmax(0, 600px);
+      grid-template-areas: "team node map";
+    }
+    .crucible .board-side { grid-area: side; }
+    .crucible .board-map, .planner .plan-map { grid-area: map; }
+    .crucible .node-detail { grid-area: detail; margin-top: 0; }
+    .planner .plan-team { grid-area: team; }
+    .planner .plan-node { grid-area: node; margin-top: 0; }
+    .crucible .node-detail .enemies { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    @media (max-width: 1799px) {
+      .crucible { grid-template-columns: minmax(0, 1fr) minmax(0, 600px); grid-template-areas: "side map" "detail detail"; }
+      .planner { grid-template-columns: minmax(0, 1fr) minmax(0, 560px); grid-template-areas: "team map" "node map"; }
+    }
+
+    .board-stats {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px;
+      font-size: .86rem; margin: 0 0 12px; padding: 8px 10px;
+      border-top: 1px solid rgba(163,149,123,.6); border-bottom: 1px solid rgba(163,149,123,.6);
+    }
+    .board-stats dt { color: var(--ink-soft); font-size: .76rem; line-height: 1.3; }
+    .board-stats dd { color: var(--ink); }
+
+    .board-side { display: flex; flex-direction: column; min-width: 0; }
+    .move-list { max-height: 520px; overflow-y: auto; padding: 3px 6px 3px 3px; }
+    .move-list::-webkit-scrollbar { width: 8px; }
+    .move-list::-webkit-scrollbar-thumb { background: #a3957b; border-radius: 4px; }
+    .move-list .move { cursor: pointer; }
+    .move-list .move:hover .move-body { background: rgba(255,255,255,.18); }
+    .move-list .move.sel { border-color: #b8923e; box-shadow: 0 0 0 2px rgba(214,170,80,.7), inset 0 1px 0 rgba(255,255,255,.45); }
+    .move-list .move.sub { margin-top: -7px; border-top-left-radius: 0; border-top-right-radius: 0; border-top-color: rgba(168,153,125,.5); }
+    .move-list .move:focus-visible { outline: 2px solid var(--gold-line); outline-offset: 1px; }
+    .move-list .move-body { padding: 6px 10px; min-height: 48px; }
+    .move-list .move-body > img { width: 38px; height: 38px; }
+
+    .board-map {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      background: url(assets/ui/map.jpg) center / cover;
+      border: 3px solid #2e2419;
+      box-shadow: 0 0 0 2px #c9a55b, 0 0 0 4px #3d3022, 0 4px 12px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+    .board-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .node {
+      all: unset;
+      position: absolute;
+      width: 6.6%; aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+    .node > img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .node > img.sym { inset: -14%; width: 128%; height: 128%; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); transition: transform .15s; }
+    .node:hover > img.sym { transform: scale(1.12); }
+    .node.sel::before {
+      content: ""; position: absolute; inset: -40%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,226,140,.95) 0%, rgba(255,210,110,.55) 45%, rgba(255,200,90,0) 70%);
+    }
+    .node:focus-visible { outline: 2px solid #fff3c4; outline-offset: 4px; border-radius: 50%; }
+
+    /* node detail panel */
+    .node-detail { margin-top: 18px; }
+    .detail-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .detail-head img { width: 48px; height: 48px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.3)); }
+    .detail-head h3 { font-family: 'Oswald', sans-serif; font-weight: 400; font-size: 1.2rem; color: var(--title); line-height: 1.15; }
+    .detail-head small { display: block; font-family: 'Noto Sans', sans-serif; font-size: .82rem; color: var(--ink-soft); }
+    .enemies { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+    .enemy .card-head { align-items: flex-start; }
+    .enemy .card-head img { width: 60px; height: 60px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+    .enemy .weak { display: block; font-size: .78rem; color: var(--ink-soft); }
+    .enemy .weak b { color: var(--red); }
+    .stars { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; font-size: .76rem; line-height: 1.35; margin-top: 3px; }
+    .stars dt { color: var(--ink-soft); }
+    .stars dd { color: #c29422; letter-spacing: 1px; text-shadow: 0 1px 0 rgba(255,255,255,.4); }
+    .stars dd .off { color: rgba(120,100,70,.28); }
+    .vuln { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 10px; padding-right: 30px; }
+    .vuln span {
+      font-size: .68rem; padding: 0 6px; border-radius: 999px;
+      border: 1px solid rgba(120,100,70,.35); color: rgba(80,65,45,.45);
+      text-decoration: line-through;
+    }
+    .vuln span.on { color: #fff; background: #5d8a3e; border-color: #3f6528; text-decoration: none; text-shadow: 0 1px 1px rgba(0,0,0,.35); }
+    .abilities { list-style: none; margin-top: 8px; font-size: .8rem; padding-right: 30px; }
+    .abilities li { padding: 3px 0; border-top: 1px dashed rgba(143,129,102,.6); }
+    .abilities li b { color: #2c2218; }
+    .abilities li span { color: var(--ink-soft); }
+    .abilities li em { font-style: normal; color: var(--red); font-weight: 600; }
+    .option-label {
+      font-family: 'Oswald', sans-serif; font-size: 1.05rem; color: var(--title);
+      margin: 14px 0 8px; display: flex; align-items: center; gap: 8px;
+    }
+    .option-label img { width: 30px; height: 30px; }
+
+    .bonus-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px 18px; }
+    .bonus-list li { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; padding: 4px 0; border-bottom: 1px solid rgba(163,149,123,.45); font-size: .84rem; }
+    .bonus-list b { color: #2c2218; }
+    .bonus-list .pts { font-family: 'Oswald', sans-serif; color: var(--title); text-align: right; }
+    .bonus-list small { grid-column: 1 / -1; color: var(--ink-soft); font-size: .76rem; }
+
+    /* ─── Beast list, styled like "Team Composition" ──────────────── */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .search {
+      flex: 1; min-width: 180px;
+      font: inherit; font-size: .88rem; color: var(--ink);
+      padding: 4px 12px;
+      background: #f1ece1;
+      border: 1px solid #a3957b; border-radius: 999px;
+      box-shadow: inset 0 1px 3px rgba(80, 60, 30, .25);
+    }
+    .search:focus { outline: 2px solid rgba(184,146,62,.6); outline-offset: 1px; }
+    select.pill { font: inherit; font-size: .82rem; cursor: pointer; appearance: none; padding-right: 28px;
+      background-image: linear-gradient(45deg, transparent 50%, #f4ecdc 50%), linear-gradient(135deg, #f4ecdc 50%, transparent 50%), linear-gradient(#77726b, #55514b);
+      background-position: calc(100% - 15px) 55%, calc(100% - 10px) 55%, 0 0;
+      background-size: 5px 5px, 5px 5px, 100% 100%;
+      background-repeat: no-repeat;
+    }
+    select.pill option { color: #222; background: #eee; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    thead th {
+      text-align: left;
+      font-family: 'Oswald', sans-serif; font-weight: 400;
+      font-size: .9rem; color: var(--title);
+      padding: 4px 8px 5px;
+      border-bottom: 1px solid var(--gold-line);
+      white-space: nowrap;
+      cursor: pointer; user-select: none;
+    }
+    thead th.nosort { cursor: default; }
+    thead th .arr { color: var(--ink-faint); font-size: .75rem; margin-left: 3px; }
+    tbody tr { border-bottom: 1px solid rgba(163,149,123,.45); }
+    tbody tr:hover { background: linear-gradient(90deg, rgba(233,210,168,.75), rgba(233,210,168,.15)); }
+    tbody tr.hidden { display: none; }
+    td { padding: 3px 8px; vertical-align: middle; }
+    td.num { color: var(--ink-faint); font-family: 'Oswald', sans-serif; text-align: right; width: 34px; }
+    td.portrait { width: 52px; padding: 2px 4px; }
+    td.portrait img { width: 44px; height: 44px; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+    td.name { font-weight: 600; color: #2c2218; white-space: nowrap; }
+    td.loc { color: var(--ink-soft); font-style: italic; font-size: .82rem; }
+    td.abil { color: var(--ink); font-size: .82rem; }
+
+    .kin { font-size: .72rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; color: #fff; white-space: nowrap;
+      text-shadow: 0 1px 1px rgba(0,0,0,.45); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+    .kin.beastkin { background: #9a6333; }
+    .kin.vilekin  { background: #7b4a93; }
+    .kin.cloudkin { background: #4d86b3; }
+    .kin.seedkin  { background: #4f8a3c; }
+    .kin.wavekin  { background: #2b8c97; }
+    .kin.scalekin { background: #b24a3c; }
+    .kin.soulkin  { background: #5a5a7c; }
+    .kin.ashkin   { background: #6f7d85; }
+
+    .aff { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .aff img { width: 22px; height: 22px; }
+
+    /* ─── Traits ──────────────────────────────────────────────────── */
+    .trait {
+      display: grid;
+      grid-template-columns: 40px 40px 210px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(163,149,123,.45);
+    }
+    .trait:hover { background: linear-gradient(90deg, rgba(233,210,168,.75), rgba(233,210,168,.1)); }
+    .trait .lv { font-family: 'Oswald', sans-serif; color: var(--title); text-align: right; font-size: 1.05rem; }
+    .trait img { width: 38px; height: 38px; border-radius: 5px; box-shadow: 0 1px 2px rgba(0,0,0,.4); }
+    .trait .nm { font-weight: 600; color: #2c2218; }
+    .trait .ds { color: var(--ink); font-size: .86rem; }
+
+    /* ─── Collapsible overview sections ──────────────────────────── */
+    details.fold { border-top: 1px solid rgba(163,149,123,.6); }
+    details.fold > summary {
+      list-style: none; cursor: pointer; user-select: none;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 6px;
+      font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: var(--title);
+      text-shadow: 0 1px 0 rgba(255,255,255,.55);
+    }
+    details.fold > summary::-webkit-details-marker { display: none; }
+    details.fold > summary:hover { background: linear-gradient(90deg, rgba(233,210,168,.6), rgba(233,210,168,0)); }
+    details.fold > summary img { width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
+    details.fold > summary small { font-family: 'Noto Sans', sans-serif; font-size: .8rem; color: var(--ink-soft); }
+    details.fold > summary::after {
+      content: ""; margin-left: auto; width: 24px; height: 13px; flex-shrink: 0;
+      background: url(assets/ui/chevron.png) center / contain no-repeat;
+      transition: transform .2s;
+    }
+    details.fold[open] > summary::after { transform: rotate(180deg); }
+    .fold-body { padding: 6px 0 20px; }
+
+    /* ─── Action tooltips (same layout as the in-game tooltip) ───── */
+    .tips { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
+    .acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; align-items: start; }
+    details.act { padding: 10px 12px 14px; }
+    details.act > summary { list-style: none; cursor: pointer; user-select: none; }
+    details.act > summary::-webkit-details-marker { display: none; }
+    details.act > summary::after {
+      content: ""; position: absolute; left: 50%; bottom: 2px; width: 22px; height: 12px; transform: translateX(-50%);
+      background: url(assets/ui/chevron.png) center / contain no-repeat; transition: transform .2s;
+    }
+    details.act[open] > summary::after { transform: translateX(-50%) rotate(180deg); }
+    details.act[open] { border-color: var(--gold-line); padding-bottom: 22px; }
+    details.act:hover { border-color: #6f6047; }
+    details.act > summary:focus-visible { outline: 2px solid var(--gold-line); outline-offset: 2px; }
+    details.act .teaser { font-size: .8rem; color: var(--ink-soft); margin-top: 6px; padding-right: 30px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    details.act[open] .teaser { display: none; }
+    .fold-tools { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: -6px; }
+    .tip-head { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; }
+    .tip-head img { width: 44px; height: 44px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.45); }
+    .tip-range { font-size: .74rem; color: var(--ink-soft); text-align: right; line-height: 1.35; white-space: nowrap; }
+    .tip-range b { color: #2c2218; font-weight: 600; }
+    .tip-stats {
+      display: flex; gap: 22px; margin-top: 10px; padding: 5px 4px 6px;
+      border-top: 1px solid #8f8166; border-bottom: 1px solid #8f8166;
+      box-shadow: 0 1px 0 rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.3);
+    }
+    .tip-stats div { display: flex; flex-direction: column; align-items: center; min-width: 52px; }
+    .tip-stats span { font-size: .7rem; color: var(--ink-soft); }
+    .tip-stats b { font-family: 'Oswald', sans-serif; font-weight: 400; font-size: 1.1rem; color: #2c2218; line-height: 1.2; }
+    .tip-desc { font-size: .84rem; color: #3b3025; line-height: 1.5; margin-top: 9px; padding-right: 30px; }
+    .tip-foot { font-size: .74rem; color: var(--ink-soft); margin-top: 9px; padding-right: 40px; }
+    .tt-g { color: #2d7a1c; font-weight: 600; }
+    .tt-o { color: #b2500c; font-weight: 600; }
+    .tt-y { color: #866400; font-weight: 600; }
+
+    /* ─── Bestiary detail rows ────────────────────────────────────── */
+    tbody.beast > tr.main { cursor: pointer; }
+    tbody.beast > tr.detail { display: none; }
+    tbody.beast.open > tr.detail { display: table-row; }
+    tbody.beast.open > tr.main { background: linear-gradient(90deg, var(--select), rgba(233,210,168,.2)); }
+    tbody.beast.hidden { display: none; }
+    tr.detail > td { padding: 6px 8px 14px; background: rgba(245,240,228,.45); }
+    tr.detail .lore { font-size: .82rem; font-style: italic; color: var(--ink-soft); max-width: 90ch; margin-bottom: 10px; }
+    td.dmg small { display: block; color: var(--red); font-size: .72rem; font-weight: 600; }
+    td.dmg { font-size: .8rem; white-space: nowrap; }
+
+    /* ─── Buttons ─────────────────────────────────────────────────── */
+    button.pill { font: inherit; font-size: .82rem; cursor: pointer; }
+    button.pill:hover { filter: brightness(1.12); }
+    button.pill:focus-visible { outline: 2px solid var(--gold-line); outline-offset: 2px; }
+    button.pill.danger { background: linear-gradient(#a8574d, #7c3229 55%, #6c2a22); border-color: #4a1c16; }
+    .toolbar .spacer { flex: 1; }
+
+    /* ─── Run planner ─────────────────────────────────────────────── */
+    .sub .tally { font-size: .9rem; color: var(--ink-soft); margin-left: 6px; }
+    .team-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+    .slot {
+      all: unset; box-sizing: border-box;
+      display: grid; grid-template-columns: 40px 1fr; gap: 0 8px; align-items: center;
+      min-height: 50px; padding: 4px 8px 4px 4px;
+      background: linear-gradient(#d3c9b4, #c9bea6);
+      border: 1px solid #a8997d; border-radius: 5px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+      font-size: .82rem; cursor: pointer;
+    }
+    .slot img { width: 40px; height: 40px; grid-row: span 2; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+    .slot b { color: #2c2218; line-height: 1.15; }
+    .slot .meta { display: flex; align-items: center; gap: 4px; }
+    .slot .meta img { width: 16px; height: 16px; grid-row: auto; filter: none; }
+    .slot:hover { border-color: var(--red); }
+    .slot:focus-visible { outline: 2px solid var(--gold-line); }
+    .slot.empty { background: rgba(245,240,228,.35); border-style: dashed; color: var(--ink-faint); cursor: default; display: flex; justify-content: center; }
+    .team-sum { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 10px 0 4px; font-size: .8rem; color: var(--ink-soft); }
+    .team-sum .aff img { width: 20px; height: 20px; }
+    .team-bonus { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 0; }
+    .team-bonus li { font-size: .74rem; padding: 1px 9px; border-radius: 999px; background: #5d8a3e; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.35); }
+
+    .picker { margin-top: 14px; }
+    .picker .move-detail { padding: 10px 12px 12px; }
+    .beast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 4px; max-height: 300px; overflow-y: auto; padding: 2px; }
+    .pick {
+      all: unset; box-sizing: border-box; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      padding: 4px 2px; border-radius: 5px; border: 1px solid transparent;
+      font-size: .68rem; text-align: center; line-height: 1.15; color: var(--ink);
+    }
+    .pick img { width: 42px; height: 42px; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+    .pick:hover { background: rgba(233,210,168,.7); }
+    .pick.on { background: var(--select); border-color: var(--gold-line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.5); }
+    .pick:focus-visible { outline: 2px solid var(--gold-line); }
+    .pick.hidden { display: none; }
+
+    .node.route::after {
+      content: ""; position: absolute; inset: -24%; border-radius: 50%;
+      border: 3px solid #ffd76a; box-shadow: 0 0 8px rgba(255,215,106,.95), inset 0 0 4px rgba(255,215,106,.8);
+      pointer-events: none;
+    }
+    .node.next::after {
+      content: ""; position: absolute; inset: -20%; border-radius: 50%;
+      border: 2px dashed rgba(255, 236, 170, .95); box-shadow: 0 0 4px rgba(0,0,0,.4);
+      pointer-events: none;
+    }
+    .score { margin: 14px auto 0; max-width: 640px; border: 1px solid #a8997d; border-radius: 5px; overflow: hidden;
+      background: linear-gradient(#d3c9b4, #c9bea6); box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+    .score dl { display: grid; grid-template-columns: auto 1fr auto; gap: 3px 0; align-items: baseline; padding: 8px 14px 10px; font-size: .86rem; }
+    .score dd.calc { padding: 0 14px; }
+    .score .rule { grid-column: 1 / -1; border: 0; border-top: 1px solid #8f8166; margin: 3px 0; }
+    .score dt { color: #2c2218; font-weight: 600; }
+    .score .calc { color: var(--ink-soft); font-size: .8rem; }
+    .score .pts { font-family: 'Oswald', sans-serif; font-size: 1rem; text-align: right; color: #2c2218; }
+    .score .muted { opacity: .5; }
+    .boosts { border-top: 1px solid #a8997d; background: rgba(245,240,228,.45); }
+    .boosts > summary {
+      list-style: none; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px; font-family: 'Oswald', sans-serif; font-size: 1rem; color: var(--title);
+    }
+    .boosts > summary::-webkit-details-marker { display: none; }
+    .boosts > summary small { font-family: 'Noto Sans', sans-serif; font-size: .76rem; color: var(--ink-soft); }
+    .boosts > summary::after {
+      content: ""; margin-left: auto; width: 20px; height: 11px;
+      background: url(assets/ui/chevron.png) center / contain no-repeat; transition: transform .2s;
+    }
+    .boosts[open] > summary::after { transform: rotate(180deg); }
+    .boosts > summary:hover { background: rgba(233,210,168,.5); }
+    .boosts ul { list-style: none; max-height: 420px; overflow-y: auto; padding: 0 8px 8px; }
+    .boosts li label {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 0 10px; align-items: start;
+      padding: 5px 6px; border-bottom: 1px solid rgba(163,149,123,.45); cursor: pointer; font-size: .82rem;
+    }
+    .boosts li label:hover { background: rgba(233,210,168,.55); }
+    .boosts li.on label { background: rgba(233,210,168,.75); }
+    .boosts li input { margin-top: 3px; width: 15px; height: 15px; accent-color: #9a6d22; }
+    .boosts li input:disabled + span { opacity: .8; }
+    .boosts li b { color: #2c2218; }
+    .boosts li em { font-style: normal; font-size: .7rem; color: #5d8a3e; font-weight: 600; }
+    .boosts li small { display: block; color: var(--ink-soft); font-size: .74rem; }
+    .boost-picked { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; padding: 0 14px 10px; }
+    .boost-picked:empty, .boosts[open] + .boost-picked { display: none; }
+    .boost-picked li { font-size: .74rem; padding: 1px 9px; border-radius: 999px; background: #5d8a3e; color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,.35); }
+    .boost-picked li span { opacity: .85; }
+    .boosts li .pts { font-family: 'Oswald', sans-serif; color: var(--title); }
+    .score .pts.total { color: var(--title); font-size: 1.15rem; }
+    .node .pin { display: none; position: absolute; right: -22%; top: -22%; width: 38%; aspect-ratio: 1; border-radius: 50%;
+      background: #fff3c4; border: 2px solid #6b4a1e; box-shadow: 0 1px 2px rgba(0,0,0,.5); }
+    .node.noted .pin { display: block; }
+
+    .plan-node { margin-top: 18px; padding: 14px 16px 16px; background: rgba(245,240,228,.5); border: 1px solid #b3a58a; border-radius: 5px; }
+    .check { display: inline-flex; align-items: center; gap: 6px; font-size: .88rem; cursor: pointer; margin: 2px 0 10px; }
+    .check input { width: 16px; height: 16px; accent-color: #9a6d22; }
+    .foes { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+    .foe { display: grid; grid-template-columns: 40px 1fr; gap: 0 10px; align-items: center; font-size: .82rem; }
+    .foe img { width: 40px; height: 40px; grid-row: span 2; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+    .foe b { color: #2c2218; }
+    .foe .weak b { color: var(--red); }
+    .chips { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+    .chips span { font-size: .68rem; padding: 0 6px; border-radius: 999px; color: #fff; background: #5d8a3e; text-shadow: 0 1px 1px rgba(0,0,0,.35); }
+    .chips span.w { background: var(--red); }
+    .chips span.none { background: none; color: var(--ink-faint); text-shadow: none; padding: 0; }
+
+    .horns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 10px; }
+    .horn .slot { width: 100%; }
+    .horn-label { display: flex; align-items: center; gap: 5px; font-size: .74rem; color: var(--ink-soft); margin-bottom: 2px; }
+    .horn-label img { width: 18px; height: 18px; }
+    .matchups { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px; margin-bottom: 12px; }
+    .mchip { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 34px 1fr; gap: 0 8px; align-items: center;
+      padding: 3px 6px 3px 3px; border-radius: 5px; border: 1px solid rgba(163,149,123,.6); font-size: .78rem; background: rgba(255,255,255,.25); }
+    .mchip img { width: 34px; height: 34px; grid-row: span 2; }
+    .mchip b { color: #2c2218; }
+    .mchip:hover { background: rgba(233,210,168,.8); }
+    .mchip.on { background: var(--select); border-color: var(--gold-line); }
+    .mchip:focus-visible { outline: 2px solid var(--gold-line); }
+    .mchip .none { color: var(--ink-faint); font-size: .7rem; }
+
+    textarea.notes {
+      display: block; width: 100%; min-height: 84px; resize: vertical;
+      font: inherit; font-size: .88rem; color: var(--ink); line-height: 1.45;
+      padding: 8px 10px; background: #f1ece1; border: 1px solid #a3957b; border-radius: 4px;
+      box-shadow: inset 0 1px 3px rgba(80,60,30,.25);
+    }
+    textarea.notes:focus { outline: 2px solid rgba(184,146,62,.6); outline-offset: 1px; }
+    .field-label { display: block; font-family: 'Oswald', sans-serif; font-size: .95rem; color: var(--title); margin: 4px 0 4px; }
+
+    .notefield textarea.notes { display: none; }
+    .notefield.editing textarea.notes { display: block; }
+    .notefield.editing .note-view { display: none; }
+    .note-view {
+      min-height: 64px; padding: 8px 10px; white-space: pre-wrap; cursor: text;
+      font-size: .88rem; line-height: 1.45; color: var(--ink);
+      background: rgba(241,236,225,.7); border: 1px solid #a3957b; border-radius: 4px;
+    }
+    .note-view:hover { background: #f1ece1; }
+    .note-view:focus-visible { outline: 2px solid rgba(184,146,62,.6); outline-offset: 1px; }
+    .note-view:empty::before { content: attr(data-placeholder); color: var(--ink-faint); font-style: italic; }
+    .ref { color: #b2500c; font-weight: 600; border-bottom: 1px dotted currentColor; cursor: help; }
+    .ref:focus-visible { outline: 2px solid var(--gold-line); }
+    .hover-tip { position: fixed; z-index: 50; width: min(380px, calc(100vw - 16px)); pointer-events: none;
+      display: flex; flex-direction: column; gap: 6px; }
+    .hover-tip[hidden] { display: none; }
+    .hover-tip .card { box-shadow: 0 8px 22px rgba(0,0,0,.5); border-color: #6f6047; }
+    .hover-tip .more { font-size: .75rem; color: #f1ece1; text-shadow: 0 1px 2px #000; }
+    .ac { position: fixed; z-index: 60; list-style: none; min-width: 240px; max-width: 340px; padding: 3px 0;
+      background: #f6f1e6; border: 1px solid #8f8166; border-radius: 4px; box-shadow: 0 6px 16px rgba(0,0,0,.4); font-size: .84rem; }
+    .ac[hidden] { display: none; }
+    .ac li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 10px; cursor: pointer; }
+    .ac li small { color: var(--ink-soft); white-space: nowrap; }
+    .ac li.on, .ac li:hover { background: var(--select); }
+    .field-hint { font-family: 'Noto Sans', sans-serif; font-size: .74rem; color: var(--ink-soft); margin-left: 6px; }
+
+    .empty-state { font-size: .86rem; color: var(--ink-soft); font-style: italic; padding: 6px 2px; }
+
+    dialog.window { margin: auto; width: min(640px, calc(100vw - 32px)); color: var(--ink); background: transparent; }
+    dialog.window::backdrop { background: rgba(20, 16, 10, .6); }
+    dialog textarea.notes { min-height: 140px; font-family: Consolas, monospace; font-size: .78rem; word-break: break-all; }
+    dialog .toolbar { margin: 12px 0 0; }
+    .msg { font-size: .82rem; min-height: 1.2em; margin-top: 8px; color: var(--ink-soft); }
+    .msg.err { color: var(--red); font-weight: 600; }
+
+    footer {
+      max-width: 2200px; margin: 0 auto; padding: 0 18px 30px;
+      text-align: center; color: #b5ab96; font-size: .78rem;
+    }
+    footer a { color: #e2c98f; }
+
+    /* ─── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 1000px) {
+      .crucible { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "side" "detail"; }
+      .planner { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "team" "node"; }
+    }
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: minmax(0, 1fr); }
+      .side { position: static; }
+      .side .window { min-height: 0; }
+      .side nav { flex-direction: row; flex-wrap: wrap; gap: 2px; }
+      .side .job-mini { display: none; }
+      .hero .axe { display: none; }
+    }
+    @media (max-width: 560px) {
+      :root { --frame-scale: 0.32; }
+      .window { padding: 22px 20px 24px; }
+      .hero { flex-direction: column; text-align: center; }
+      .trait { grid-template-columns: 30px 36px 1fr; }
+      .trait .ds { grid-column: 2 / -1; }
+      .horns { grid-template-columns: minmax(0, 1fr); }
+      .tip-stats { gap: 12px; }
+    }
+    .side nav a.subl { font-size: .9rem; padding: 3px 10px 3px 26px; color: var(--ink-soft); }
+    @media (max-width: 860px) { .side nav a.subl { display: none; } }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── Side navigation ("Board Selection") ─────────────────────── -->
+  <aside class="side">
+    <div class="window">
+      <div class="win-title">Contents</div>
+      <nav id="sideNav">
+        <a href="#overview" class="active">Overview</a>
+        <a href="#combos" class="subl">Combos</a>
+        <a href="#gauge" class="subl">Job Gauge</a>
+        <a href="#actions" class="subl">Actions</a>
+        <a href="#traits" class="subl">Traits</a>
+        <a href="#crucible">Crucible of the Unbroken</a>
+        <a href="#planner">Run Planner</a>
+        <a href="#bestiary">Master's Bestiary</a>
+      </nav>
+      <div class="job-mini">
+        <img src="assets/icons/job-bst.png" alt="" />
+        <span>Beastmaster reference<br />Patch 7.56 · Dawntrail</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <!-- ── Overview: job header + collapsible combos, gauge, actions, traits ─ -->
+    <section class="window note" id="overview">
+      <div class="hero">
+        <img class="crest" src="assets/ui/crest.png" alt="Beastmaster crest" />
+        <div>
+          <h1>Beastmaster</h1>
+          <p class="subtitle">Limited Melee DPS · Patch 7.56 · Dawntrail</p>
+        </div>
+        <img class="axe" src="assets/ui/axe.png" alt="" />
+      </div>
+
+      <details class="fold" id="combos">
+        <summary><img src="assets/ui/affinity-rampant.png" alt="" />Combos <small>Instinctual, Intentional and Infinitive</small></summary>
+        <div class="fold-body">
+          <details class="move" open>
+            <summary>
+              <div class="move-head">Combo Tier I</div>
+              <div class="move-body">
+                <img src="assets/ui/affinity-eldritch.png" alt="" />
+                <div class="txt">Instinctual Combo <small>Any instinctual skill within ~7s of another · 1.2×</small></div>
+              </div>
+            </summary>
+            <div class="move-detail">
+              Fire any instinctual skill within about seven seconds of another instinctual skill of a <em>different</em>
+              affinity — yours or your familiar's Trick. The combo-count multiplier escalates from 1.0× on the first hit to
+              3.0× on the fifth hit and beyond.
+            </div>
+          </details>
+
+          <details class="move">
+            <summary>
+              <div class="move-head">Combo Tier II</div>
+              <div class="move-body">
+                <img src="assets/ui/affinity-volant.png" alt="" />
+                <div class="txt">Intentional Combo <small>Rampant→Durant→Eldritch→Volant→Rampant · 1.5× · grants Sunstrider / Moonstalker</small></div>
+              </div>
+            </summary>
+            <div class="move-detail">
+              Use an affinity while the previous one's Heart is active. Per the game's tooltips:
+              Volant Heart → <strong>Rampant</strong> and Durant Heart → <strong>Eldritch</strong> complete a
+              <strong>Sunstrider</strong> combo; Rampant Heart → <strong>Durant</strong> and Eldritch Heart →
+              <strong>Volant</strong> complete a <strong>Moonstalker</strong> combo.
+            </div>
+          </details>
+
+          <details class="move">
+            <summary>
+              <div class="move-head">Combo Tier III</div>
+              <div class="move-body">
+                <img src="assets/ui/affinity-rampant.png" alt="" />
+                <div class="txt">Infinitive Combo: Universality <small>Sunstrider ↔ Moonstalker · 2.0× · Lv. 50</small></div>
+              </div>
+            </summary>
+            <div class="move-detail">
+              Use a Sunstrider skill (Brutal Rage, Risen Fall) while Moonstalker is active, or a Moonstalker skill
+              (Hawkish Talons, Calamity) while Sunstrider is active, for the highest single-hit multiplier.
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="fold" id="gauge">
+        <summary><img src="assets/ui/gauge-emblem.png" alt="" />Job Gauge <small>TP, Familiar TP and affinities</small></summary>
+        <div class="fold-body">
+          <div class="gauge-layout">
+            <div class="gauge-panel">
+              <img class="emblem" src="assets/ui/gauge-emblem.png" alt="Beastmaster gauge emblem" />
+              <div class="bar-label"><span>TP</span><span>175 / 250</span></div>
+              <div class="xbar tp" style="--p:.70"><div class="fill"></div></div>
+              <div class="bar-label"><span>Familiar TP</span><span>110 / 250</span></div>
+              <div class="xbar ftp" style="--p:.44"><div class="fill"></div></div>
+              <p class="note" style="max-width:300px;text-align:center;margin-top:4px">
+                Instinctual weaponskills cost 100+ TP and scale 400→1,000 potency. At 250 TP they become 1,200-potency finishers.
+                Trick needs 100 Familiar TP.
+              </p>
+            </div>
+
+            <div class="gauge-panel">
+              <div class="wheel">
+                <svg viewBox="0 0 250 250" aria-hidden="true">
+                  <defs>
+                    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#86652a" />
+                    </marker>
+                  </defs>
+                  <g fill="none" stroke="#86652a" stroke-width="2.5" stroke-dasharray="1 0" marker-end="url(#arr)" opacity=".75">
+                    <path d="M160 46 A92 92 0 0 1 205 92" />
+                    <path d="M205 158 A92 92 0 0 1 160 204" />
+                    <path d="M90 204 A92 92 0 0 1 45 158" />
+                    <path d="M45 92 A92 92 0 0 1 90 46" />
+                  </g>
+                </svg>
+                <div class="med n"><img src="assets/ui/affinity-rampant.png" alt="" />Rampant</div>
+                <div class="med e"><img src="assets/ui/affinity-durant.png" alt="" />Durant</div>
+                <div class="med s"><img src="assets/ui/affinity-eldritch.png" alt="" />Eldritch</div>
+                <div class="med w"><img src="assets/ui/affinity-volant.png" alt="" />Volant</div>
+              </div>
+              <p class="note" style="max-width:320px;text-align:center;margin-top:16px">
+                Clockwise steps form Intentional combos. <strong>Mastered Instinct</strong> (Lv. 28) and
+                <strong>Natural Instinct</strong> (Lv. 40) stacks feed Rally and Rallying Cheer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="fold" id="actions">
+        <summary><img src="assets/icons/actions/3944.png" alt="" />Actions <small id="actionCount"></small></summary>
+        <div class="fold-body" id="actionGroups"></div>
+      </details>
+
+      <details class="fold" id="traits">
+        <summary><img src="assets/icons/traits/6613.png" alt="" />Traits <small id="traitCount"></small></summary>
+        <div class="fold-body" id="traitList"></div>
+      </details>
+    </section>
+
+    <!-- ── Crucible of the Unbroken ──────────────────────────────── -->
+    <section class="window" id="crucible">
+      <div class="win-title">Crucible of the Unbroken</div>
+      <div class="board-tabs" id="boardList" role="group" aria-label="Board"></div>
+      <div class="crucible">
+        <div class="board-side">
+          <dl class="board-stats" id="boardStats"></dl>
+          <div class="move-list" id="moveList"></div>
+        </div>
+        <div class="board-map" id="boardMap"><svg id="boardLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+        <div class="node-detail" id="nodeDetail" aria-live="polite"></div>
+      </div>
+
+      <details class="move" style="margin-top:16px">
+        <summary>
+          <div class="move-head">Score</div>
+          <div class="move-body">
+            <img src="assets/ui/horn-1.png" alt="" />
+            <div class="txt">Bonuses <small id="bonusSummary"></small></div>
+          </div>
+        </summary>
+        <div class="move-detail"><ul class="bonus-list" id="bonusList"></ul></div>
+      </details>
+      <p class="note" style="margin-top:10px">
+        Board data is decoded from the game files. Star-rating labels and status names are inferred and may not match
+        the in-game wording exactly.
+      </p>
+    </section>
+
+    <!-- ── Run planner ───────────────────────────────────────────── -->
+    <section class="window" id="planner">
+      <div class="win-title">Run Planner <span class="count" id="planStatus"></span></div>
+      <p class="lead" style="margin-bottom:12px">
+        Plan a Crucible run per board: pick your team, mark the spaces you intend to take, and set battlehorns and
+        notes for each fight. Plans are kept in this browser; use <strong>Export</strong> to save a copy or move it
+        to another device, and <strong>Import</strong> to load one back.
+      </p>
+      <div class="toolbar">
+        <div class="board-tabs" id="planBoard" role="group" aria-label="Board" style="margin:0"></div>
+        <span class="spacer"></span>
+        <button type="button" class="pill" id="planExport">Export</button>
+        <button type="button" class="pill" id="planImport">Import</button>
+        <button type="button" class="pill" id="planShare">Copy share link</button>
+        <button type="button" class="pill danger" id="planReset">Clear board</button>
+      </div>
+
+      <div class="planner">
+        <div class="plan-team">
+          <h3 class="sub" style="margin-top:4px">Team Composition <span class="tally" id="teamTally"></span></h3>
+          <div class="team-slots" id="teamSlots"></div>
+          <div class="team-sum" id="teamSum"></div>
+          <ul class="team-bonus" id="teamBonus"></ul>
+
+          <details class="move picker" id="pickerFold" open>
+            <summary>
+              <div class="move-head">Familiars</div>
+              <div class="move-body">
+                <img src="assets/icons/actions/3941.png" alt="" />
+                <div class="txt">Choose your team <small>Click a beast to add or remove it.</small></div>
+              </div>
+            </summary>
+            <div class="move-detail">
+              <div class="toolbar">
+                <input class="search" type="search" id="pickSearch" placeholder="Search name, type, status…" />
+                <select class="pill select" id="pickClass" aria-label="Classification">
+                  <option value="">All Classifications</option>
+                </select>
+              </div>
+              <div class="beast-grid" id="beastPick"></div>
+            </div>
+          </details>
+        </div>
+        <div class="plan-map">
+          <div class="board-map" id="planMap"><svg id="planLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+          <p class="note" style="text-align:center;margin-top:8px">
+            Click a space to plan it. <strong>Right-click</strong> to add it to your route or remove it.
+            Gold rings mark your route, dashed rings the next possible spaces; pins mark notes.
+          </p>
+          <div class="score" id="planScore">
+            <div class="move-head">Score Estimate</div>
+            <dl id="scoreRows"></dl>
+            <details class="boosts">
+              <summary>Choose bonus boosts <small id="boostCount"></small></summary>
+              <ul id="boostList"></ul>
+            </details>
+            <ul class="boost-picked" id="boostPicked"></ul>
+          </div>
+        </div>
+        <div class="plan-node" id="planNode" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <dialog class="window paper" id="planDialog">
+      <div class="win-title" id="dlgTitle"></div>
+      <p class="note" id="dlgHelp"></p>
+      <textarea class="notes" id="dlgText" spellcheck="false" style="margin-top:8px"></textarea>
+      <div class="msg" id="dlgMsg"></div>
+      <div class="toolbar" id="dlgButtons"></div>
+      <input type="file" id="dlgFile" accept=".json,.txt,application/json,text/plain" hidden />
+    </dialog>
+
+    <!-- ── Bestiary ──────────────────────────────────────────────── -->
+    <section class="window" id="bestiary">
+      <div class="win-title">Master's Bestiary <span class="count" id="resultCount">50/50</span></div>
+      <div class="toolbar">
+        <input class="search" type="search" id="beastSearch" placeholder="Search name, location, ability, status…" oninput="filterBeasts()" />
+        <select class="pill select" id="classFilter" onchange="filterBeasts()">
+          <option value="">All Classifications</option>
+          <option value="beastkin">Beastkin</option>
+          <option value="vilekin">Vilekin</option>
+          <option value="cloudkin">Cloudkin</option>
+          <option value="seedkin">Seedkin</option>
+          <option value="wavekin">Wavekin</option>
+          <option value="scalekin">Scalekin</option>
+          <option value="soulkin">Soulkin</option>
+          <option value="ashkin">Ashkin</option>
+        </select>
+        <select class="pill select" id="affinityFilter" onchange="filterBeasts()">
+          <option value="">All Affinities</option>
+          <option value="rampant">Rampant</option>
+          <option value="durant">Durant</option>
+          <option value="eldritch">Eldritch</option>
+          <option value="volant">Volant</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table id="beastTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">#<span class="arr">↕</span></th>
+              <th class="nosort"></th>
+              <th onclick="sortTable(2)">Name<span class="arr">↕</span></th>
+              <th onclick="sortTable(3)">Class<span class="arr">↕</span></th>
+              <th onclick="sortTable(4)">Affinity<span class="arr">↕</span></th>
+              <th onclick="sortTable(5)" title="Trick damage type and statuses the beast can inflict">Type<span class="arr">↕</span></th>
+              <th onclick="sortTable(6)">Location<span class="arr">↕</span></th>
+              <th class="nosort">Trick</th>
+              <th class="nosort">Tempered Release</th>
+            </tr>
+          </thead>
+
+        </table>
+      </div>
+    </section>
+
+
+  </main>
+</div>
+
+<footer>
+  FINAL FANTASY XIV © SQUARE ENIX. Game images are used under the
+  <a href="https://support.na.square-enix.com/rule.php?id=5382&tag=authc" target="_blank" rel="noopener">FFXIV Materials Usage License</a>.
+  Fan-made, non-commercial reference. Data from
+  <a href="https://ffxiv.consolegameswiki.com/wiki/Beastmaster" target="_blank" rel="noopener">Console Games Wiki</a>,
+  <a href="https://eorzeantavern.com/beastmaster/" target="_blank" rel="noopener">Eorzean Tavern</a> and
+  <a href="https://v2.xivapi.com/" target="_blank" rel="noopener">XIVAPI</a>.
+</footer>
+
+<script src="data/crucible.js"></script>
+<script src="data/actions.js"></script>
+<div class="hover-tip" id="hoverTip" role="tooltip" hidden></div>
+<ul class="ac" id="refAc" role="listbox" hidden></ul>
+<script>
+  const { boards, encounters, statusSlots } = window.CRUCIBLE;
+  const { groups: ACTION_GROUPS, beasts: FAMILIARS, traits: TRAITS } = window.BST_DATA;
+
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const portrait = n => `assets/icons/beasts/${String(n).padStart(2, "0")}.png`;
+  const CLASSES = ["beastkin", "vilekin", "cloudkin", "seedkin", "wavekin", "scalekin", "soulkin", "ashkin"];
+  const AFFINITIES = ["rampant", "durant", "eldritch", "volant"];
+
+  // ── Tooltips (text and colour markup from data/actions.js) ───────
+  const tipHead = (a, type) => `
+        <div class="tip-head">
+          <img src="assets/icons/actions/${a.icon}.png" alt="" loading="lazy" />
+          <div><span class="card-name">${esc(a.name)}</span><span class="card-type">${esc(type)}</span></div>
+          <div class="tip-range">Range <b>${a.range}y</b><br />Radius <b>${a.radius}y</b></div>
+        </div>`;
+  function tipBody(a, foot) {
+    const stats = [];
+    if (a.cast || a.recast) stats.push(["Cast", a.cast ? a.cast.toFixed(2) + "s" : "Instant"], ["Recast", a.recast.toFixed(2) + "s"]);
+    if (a.cost) stats.push([`${a.cost.type} Cost`, a.cost.value]);
+    if (a.charges) stats.push(["Charges", a.charges]);
+    return `
+        ${stats.length ? `<div class="tip-stats">${stats.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>` : ""}
+        <div class="tip-desc">${a.desc}</div>
+        ${foot ? `<div class="tip-foot">${foot}</div>` : ""}`;
+  }
+  const tipCard = (a, { type = a.category, foot = "" } = {}) =>
+    `<div class="card">${tipHead(a, type)}${tipBody(a, foot)}</div>`;
+
+  // Collapsed action card: name and first tooltip line; click for the full tooltip
+  const actionItem = (a, foot) => `
+      <details class="card act">
+        <summary>${tipHead(a, `${a.category} · Lv. ${a.level}`)}
+          <p class="teaser">${esc(a.desc.split("<br>")[0].replace(/<[^>]+>/g, ""))}</p></summary>
+        ${tipBody(a, foot)}
+      </details>`;
+
+  // ── Overview: actions + traits ───────────────────────────────────
+  const KINSHIP_LEAD = `<p class="lead" style="margin-bottom:12px"><strong>Borrow</strong> grants a Kinship based on the
+    summoned familiar's classification, and Beast Mode turns into the matching action below.</p>`;
+  document.getElementById("actionGroups").innerHTML = `
+    <div class="fold-tools">
+      <button type="button" class="pill" data-acts="open">Expand all</button>
+      <button type="button" class="pill" data-acts="close">Collapse all</button>
+    </div>` + ACTION_GROUPS.map((g, i) => `
+    <h3 class="sub"${i === 0 ? ' style="margin-top:4px"' : ""}>${esc(g.title)}</h3>
+    ${g.title === "Kinship Actions" ? KINSHIP_LEAD : ""}
+    <div class="acts">${g.actions.map(a => actionItem(a,
+      a.kinship ? `Borrow from a <span class="kin ${a.kinship}">${cap(a.kinship)}</span> familiar` : "")).join("")}</div>`).join("");
+  document.querySelector("#actionGroups .fold-tools").addEventListener("click", e => {
+    const mode = e.target.closest("[data-acts]")?.dataset.acts;
+    if (mode) document.querySelectorAll("#actionGroups details.act").forEach(d => d.open = mode === "open");
+  });
+  document.getElementById("actionCount").textContent =
+    `${ACTION_GROUPS.reduce((n, g) => n + g.actions.length, 0)} actions · in-game tooltips`;
+
+  document.getElementById("traitList").innerHTML = TRAITS.map(t => `
+    <div class="trait">
+      <span class="lv">${t.level}</span>
+      <img src="assets/icons/traits/${t.icon}.png" alt="" loading="lazy" />
+      <span class="nm">${esc(t.name)}</span>
+      <span class="ds">${t.desc}</span>
+    </div>`).join("");
+  document.getElementById("traitCount").textContent = `${TRAITS.length} traits`;
+
+  // Nav links into a collapsed section open it first
+  function openFold(hash) {
+    const el = hash && hash.length > 1 && document.getElementById(hash.slice(1));
+    if (el && el.matches("details.fold")) { el.open = true; return el; }
+  }
+  document.querySelectorAll("#sideNav a").forEach(a => a.addEventListener("click", () => openFold(a.getAttribute("href"))));
+  openFold(location.hash)?.scrollIntoView();
+
+  // ── Crucible board helpers (shared by the board viewer and the planner) ─
+  const LABEL = { enemy: "Enemy", elite: "Elite Enemy", boss: "Boss of the Board", shop: "Shop",
+                  camp: "Campsite", treasure: "Treasure", random: "Random", start: "Start" };
+  const ICON = t => `assets/ui/node-${t}.png`;
+  const X = x => 50 + (x - 6) * 8.8;   // map grid → % (columns 4–8, centre 6)
+  const Y = y => 6.5 + y * 7.25;       // rows 0 (top) – 12 (bottom)
+
+  // #1, #2 … per space type, counted from the start of the board
+  boards.forEach(b => {
+    const count = {};
+    [...b.nodes].sort((p, q) => p.move - q.move || p.x - q.x).forEach(n => {
+      count[n.type] = (count[n.type] || 0) + 1;
+      n.num = count[n.type];
+    });
+  });
+
+  function summary(n) {
+    const enc = n.encounter != null ? encounters[n.encounter] : null;
+    switch (n.type) {
+      case "enemy":    return `Enemy #${n.num}: Combat ${plural(enc.length, "type")} of beast.`;
+      case "elite":    return `Elite Enemy #${n.num}: Combat ${plural(enc.length, "type")} of beast.`;
+      case "boss":     return `Boss of the Board: Combat ${plural(enc.length, "type")} of beast.`;
+      case "shop":     return `Shop #${n.num}: Purchase items with territory tokens.`;
+      case "camp":     return `Campsite #${n.num}: Recover HP for yourself and up to ${plural(n.familiars, "familiar")}.`;
+      case "treasure": return `Treasure #${n.num}: Select an item from a bountiful coffer.`;
+      case "random":   return `Random ${n.options.map(o => LABEL[o.type]).join(" or ")} #${n.num}: Take your chances.`;
+      default:         return "Starting point.";
+    }
+  }
+
+  // Every enemy that can appear on a space (random spaces may roll a fight)
+  function nodeEnemies(n) {
+    const ids = n.encounter != null ? [n.encounter] : (n.options || []).filter(o => o.encounter != null).map(o => o.encounter);
+    return ids.flatMap(id => encounters[id]);
+  }
+
+  // Board edges run one way, from a space to the next space up the board
+  const SUCC = new Map(boards.map(b => {
+    const m = {};
+    b.edges.forEach(([a, c]) => (m[a] ||= []).push(c));
+    return [b.id, m];
+  }));
+  const nextSpaces = (b, id) => SUCC.get(b.id)[id] || [];
+
+  // Red paths; edges listed in `goldEdges` ("from-to" keys) get a gold core
+  function drawEdges($svg, b, goldEdges) {
+    const at = Object.fromEntries(b.nodes.map(n => [n.id, n]));
+    $svg.innerHTML = b.edges.map(([a, c]) => {
+      const p = at[a], q = at[c];
+      const xy = `x1="${X(p.x)}" y1="${Y(p.y)}" x2="${X(q.x)}" y2="${Y(q.y)}" vector-effect="non-scaling-stroke"`;
+      const gold = goldEdges && goldEdges.has(`${a}-${c}`);
+      return `<line ${xy} stroke="#3b1c14" style="stroke-width:7px"/><line ${xy} stroke="#b2291e" style="stroke-width:4px"/>` +
+        (gold ? `<line ${xy} stroke="#ffd76a" style="stroke-width:3px"/>` : "");
+    }).join("");
+  }
+
+  function drawNodes($map, b, onSelect) {
+    $map.querySelectorAll(".node").forEach(el => el.remove());
+    b.nodes.forEach(n => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "node";
+      el.dataset.id = n.id;
+      el.style.left = X(n.x) + "%";
+      el.style.top = Y(n.y) + "%";
+      el.title = summary(n);
+      el.setAttribute("aria-label", `Move ${n.move}. ${summary(n)}`);
+      el.innerHTML = (n.type === "start"
+        ? `<img src="${ICON("start")}" alt="" />`
+        : `<img src="assets/ui/node-ring.png" alt="" /><img class="sym" src="${ICON(n.type)}" alt="" />`) + `<span class="pin"></span>`;
+      el.addEventListener("click", () => onSelect(n.id));
+      $map.appendChild(el);
+    });
+  }
+
+  // ── Crucible of the Unbroken (data: data/crucible.js) ──────────
+  (function crucible() {
+    const STAR_LABELS = ["Phys. Atk", "Mag. Atk", "Phys. Def", "Mag. Def", "HP"];
+
+    const $list = document.getElementById("boardList");
+    const $stats = document.getElementById("boardStats");
+    const $moves = document.getElementById("moveList");
+    const $map = document.getElementById("boardMap");
+    const $lines = document.getElementById("boardLines");
+    const $detail = document.getElementById("nodeDetail");
+    let board;
+
+    const stars = v => "★".repeat(v) + `<span class="off">${"★".repeat(Math.max(0, 5 - v))}</span>`;
+
+    function enemyCards(encId) {
+      return `<div class="enemies">${encounters[encId].map(e => `
+        <div class="card enemy">
+          <div class="card-head">
+            <img src="assets/icons/enemies/${e.icon}.png" alt="" loading="lazy" />
+            <div>
+              <span class="card-name">${esc(e.name)}</span>
+              <span class="weak">Weakness: <b>${esc(e.weakness) || "None"}</b></span>
+              <dl class="stars">${e.stars.map((s, i) => `<dt>${STAR_LABELS[i]}</dt><dd>${stars(s)}</dd>`).join("")}</dl>
+            </div>
+          </div>
+          <div class="vuln" title="Highlighted: vulnerable. Struck through: immune.">
+            ${statusSlots.map(s => `<span class="${e.vulnerable.includes(s) ? "on" : ""}">${s}</span>`).join("")}
+          </div>
+          ${e.actions.length ? `<ul class="abilities">${e.actions.map(a => `
+            <li><b>${esc(a.name)}</b>
+              <span>· ${[a.area, a.target, a.damage].filter(Boolean).map(esc).join(" · ")}</span>
+              ${a.status ? `<em>→ ${esc(a.status)}</em>` : ""}</li>`).join("")}</ul>` : ""}
+        </div>`).join("")}</div>`;
+    }
+
+    function renderDetail(n) {
+      let body;
+      if (n.encounter != null) body = enemyCards(n.encounter);
+      else if (n.type === "random") {
+        body = n.options.map(o => `
+          <div class="option-label"><img src="${ICON(o.type)}" alt="" />Possible ${LABEL[o.type].toLowerCase()}</div>
+          ${o.encounter != null ? enemyCards(o.encounter)
+            : o.type === "camp" ? `<p class="lead">Recover HP for yourself and up to ${plural(o.familiars ?? 1, "familiar")}.</p>`
+            : `<p class="lead">${LABEL[o.type]} space.</p>`}`).join("");
+      } else if (n.type === "shop") body = `<p class="lead">Spend territory tokens on crucible items and beast gear.</p>`;
+      else if (n.type === "treasure") body = `<p class="lead">Choose one item from the coffer.</p>`;
+      else if (n.type === "camp") body = `<p class="lead">Rest to recover HP for yourself and up to ${plural(n.familiars, "familiar")}. Resting familiars lose current feed effects.</p>`;
+      else body = `<p class="lead">Your team enters the board here.</p>`;
+
+      $detail.innerHTML = `
+        <div class="detail-head">
+          <img src="${ICON(n.type)}" alt="" />
+          <h3>${n.move ? `Move ${n.move} · ` : ""}${esc(LABEL[n.type])}<small>${esc(summary(n))}</small></h3>
+        </div>${body}`;
+    }
+
+    function select(id, updateHash = true) {
+      if (updateHash) history.replaceState(null, "", `#board-${board.id}-${id}`);
+      $map.querySelectorAll(".node").forEach(el => el.classList.toggle("sel", +el.dataset.id === id));
+      $moves.querySelectorAll(".move").forEach(el => el.classList.toggle("sel", +el.dataset.id === id));
+      const row = $moves.querySelector(`.move[data-id="${id}"]`);
+      if (row) $moves.scrollTop = Math.max(0, row.offsetTop - $moves.offsetTop - 40);
+      renderDetail(board.nodes[id]);
+    }
+
+    function renderBoard(b, updateHash = true) {
+      board = b;
+      $list.querySelectorAll("button").forEach(btn => btn.setAttribute("aria-pressed", +btn.dataset.id === b.id));
+
+      $stats.innerHTML = `
+        <div><dt>Level</dt><dd>${b.level} (Sync to ${b.level})</dd></div>
+        <div><dt>Avg. Item Level</dt><dd>${b.itemLevel}${b.itemLevelSync ? ` (Sync to ${b.itemLevelSync})` : ""}</dd></div>
+        <div><dt>Recommended Beast Rank</dt><dd>${b.recommendedRank} (Sync from ${b.syncRank})</dd></div>
+        <div><dt>Team Size</dt><dd>Up to ${b.teamSize} familiars</dd></div>`;
+
+      drawEdges($lines, b);
+      drawNodes($map, b, id => select(id));
+
+      // move list, top of the board first (like the in-game Board Layout)
+      const sorted = b.nodes.filter(n => n.type !== "start").sort((p, q) => q.move - p.move || q.id - p.id);
+      $moves.innerHTML = sorted.map((n, i) => {
+        const first = i === 0 || sorted[i - 1].move !== n.move;
+        return `<div class="move${first ? "" : " sub"}" data-id="${n.id}" tabindex="0" role="button">
+          ${first ? `<div class="move-head">Move ${n.move}</div>` : ""}
+          <div class="move-body"><img src="${ICON(n.type)}" alt="" /><div class="txt">${esc(summary(n))}</div></div>
+        </div>`;
+      }).join("");
+      $moves.querySelectorAll(".move").forEach(el => {
+        const go = () => select(+el.dataset.id);
+        el.addEventListener("click", go);
+        el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+      });
+
+      document.getElementById("bonusSummary").textContent = `${b.bonuses.length} available on this board`;
+      document.getElementById("bonusList").innerHTML = b.bonuses.map(x =>
+        `<li><b>${esc(x.name)}</b><span class="pts">+${x.points.toLocaleString()}</span><small>${esc(x.desc)}</small></li>`).join("");
+
+      const nodeId = b.nodes.some(n => n.id === initialNode) ? initialNode : b.nodes.find(n => n.type === "boss").id;
+      initialNode = null;
+      select(nodeId, updateHash);
+    }
+
+    // deep links: #board-3 or #board-3-12 (board, space)
+    const m = location.hash.match(/^#board-(\d+)(?:-(\d+))?$/);
+    let initialNode = m && m[2] != null ? +m[2] : null;
+
+    $list.innerHTML = boards.map(b =>
+      `<button type="button" class="pill" data-id="${b.id}" aria-pressed="false">${esc(b.name)}</button>`).join("");
+    $list.querySelectorAll("button").forEach(btn =>
+      btn.addEventListener("click", () => renderBoard(boards.find(b => b.id === +btn.dataset.id))));
+    renderBoard(boards.find(b => m && b.id === +m[1]) || boards[0], !!m);
+    if (m) document.getElementById("crucible").scrollIntoView();
+  })();
+
+  // ── Beasts: names and capture locations; everything else from data/actions.js ─
+  const BEASTS = [
+    [1,  "Cu Sith",         "Ilsabard"],
+    [2,  "Squirrel",        "Central Shroud"],
+    [3,  "Lamb",            "Middle La Noscea"],
+    [4,  "Pugil",           "Middle La Noscea"],
+    [5,  "Opo-opo",         "North Shroud"],
+    [6,  "Dodo",            "Lower La Noscea"],
+    [7,  "Coblyn",          "Western Thanalan"],
+    [8,  "Diremite",        "Central Shroud"],
+    [9,  "Megalocrab",      "Middle La Noscea"],
+    [10, "Wespe",           "Central Thanalan"],
+    [11, "Vulture",         "Western Thanalan"],
+    [12, "Mandragora",      "Middle La Noscea"],
+    [13, "Geshunpest",      "Central Shroud"],
+    [14, "Puk",             "Middle La Noscea"],
+    [15, "Crab",            "Western Thanalan"],
+    [16, "Mantis",          "Western La Noscea"],
+    [17, "Slime",           "Copperbell Mines"],
+    [18, "Dullahan",        "Halatali"],
+    [19, "Bat",             "Lower La Noscea"],
+    [20, "Flying Trap",     "Central Shroud"],
+    [21, "Ziz",             "Western La Noscea"],
+    [22, "Sabotender",      "Western Thanalan"],
+    [23, "Golem",           "Southern Thanalan"],
+    [24, "Apkallu",         "Eastern La Noscea"],
+    [25, "Adamantoise",     "Central Thanalan"],
+    [26, "Buffalo",         "Middle La Noscea"],
+    [27, "Uragnite",        "Western Thanalan"],
+    [28, "Worm",            "Southern Thanalan"],
+    [29, "Spriggan",        "Central Thanalan"],
+    [30, "Goobbue",         "Lower La Noscea"],
+    [31, "Gigantoad",       "Lower La Noscea"],
+    [32, "Colibri",         "Eastern La Noscea"],
+    [33, "Coeurl",          "Outer La Noscea"],
+    [34, "Raptor",          "Central Shroud"],
+    [35, "Drake",           "Southern Thanalan"],
+    [36, "Treant",          "Central Shroud"],
+    [37, "Antling",         "Cutter's Cry"],
+    [38, "Chimera",         "Cutter's Cry"],
+    [39, "Morbol",          "Central Shroud"],
+    [40, "Ghost",           "Middle La Noscea"],
+    [41, "Salamander",      "Central Shroud"],
+    [42, "Cobra",           "Mor Dhona"],
+    [43, "Hydra",           "A Relic Reborn: the Hydra"],
+    [44, "Damselfly",       "The Lost City of Amdapor"],
+    [45, "Rotting Goobbue", "The Lost City of Amdapor"],
+    [46, "Zu",              "Pharos Sirius"],
+    [47, "Ice Golem",       "Snowcloak"],
+    [48, "Karlabos",        "Sastasha (Hard)"],
+    [49, "Rafflesia",       "The Second Coil of Bahamut - Turn 1"],
+    [50, "Behemoth",        "The Labyrinth of the Ancients"],
+  ];
+  const BEAST = Object.fromEntries(BEASTS.map(([n, name, loc]) => [n, { ...FAMILIARS[n - 1], name, loc }]));
+
+  // ── Note references: [Name] in notes shows that action / beast / enemy on hover ─
+  const REFS = new Map();   // lower-case name → { name, kind, items: [card html] }
+  function addRef(name, kind, html) {
+    const key = name.toLowerCase(), r = REFS.get(key) || { name, kind, items: [] };
+    if (!r.items.includes(html)) r.items.push(html);
+    REFS.set(key, r);
+  }
+  ACTION_GROUPS.forEach(g => g.actions.forEach(a => addRef(a.name, "Action", tipCard(a))));
+  Object.values(BEAST).forEach(b => {
+    addRef(b.name, "Familiar", `
+      <div class="card"><div class="tip-head"><img src="${portrait(b.n)}" alt="" />
+        <div><span class="card-name">${esc(b.name)}</span><span class="kin ${b.class}">${cap(b.class)}</span></div>
+        <div class="tip-range"><span class="aff"><img src="assets/ui/affinity-${b.affinity}.png" alt="" />${cap(b.affinity)}</span></div></div>
+        <div class="tip-desc"><span class="tt-g">Trick:</span> <span class="tt-o">${esc(b.trick.name)}</span> (${esc(b.damage)})<br />
+          <span class="tt-g">Tempered Release:</span> <span class="tt-o">${esc(b.release.name)}</span>
+          ${b.inflicts.length ? `<br /><span class="tt-g">Inflicts:</span> ${b.inflicts.map(x => `<span class="tt-y">${esc(x)}</span>`).join(", ")}` : ""}</div></div>`);
+    addRef(b.trick.name, "Trick", tipCard(b.trick, { type: `${b.name} · Trick` }));
+    addRef(b.release.name, "Tempered Release", tipCard(b.release, { type: `${b.name} · Tempered Release` }));
+  });
+  {
+    const foeActs = new Map();
+    Object.values(encounters).flat().forEach(e => {
+      addRef(e.name, "Enemy", `
+        <div class="card"><div class="tip-head"><img src="assets/icons/enemies/${e.icon}.png" alt="" style="box-shadow:none" />
+          <div><span class="card-name">${esc(e.name)}</span><span class="card-type">Crucible enemy</span></div><div></div></div>
+          <div class="tip-desc"><span class="tt-g">Weakness:</span> ${esc(e.weakness) || "None"}<br />
+            <span class="tt-g">Vulnerable to:</span> ${e.vulnerable.map(x => `<span class="tt-y">${esc(x)}</span>`).join(", ") || "Nothing"}
+            ${e.actions.length ? `<br /><span class="tt-g">Abilities:</span> ${e.actions.map(a => `<span class="tt-o">${esc(a.name)}</span>`).join(", ")}` : ""}</div></div>`);
+      e.actions.forEach(a => {
+        const key = [a.name, a.area, a.target, a.damage, a.status].join("|");
+        if (!foeActs.has(key)) foeActs.set(key, { a, users: new Set() });
+        foeActs.get(key).users.add(e.name);
+      });
+    });
+    foeActs.forEach(({ a, users }) => addRef(a.name, "Enemy ability", `
+      <div class="card"><span class="card-name">${esc(a.name)}</span><span class="card-type">Enemy ability</span>
+        <div class="tip-desc">${[a.area, a.target, a.damage].filter(Boolean).map(esc).join(" · ") || "—"}
+          ${a.status ? `<br /><span class="tt-g">Effect:</span> <span class="tt-y">${esc(a.status)}</span>` : ""}
+          <br /><span class="tt-g">Used by:</span> ${[...users].map(esc).join(", ")}</div></div>`));
+  }
+
+  function renderNote(text) {
+    let out = "", last = 0;
+    for (const m of text.matchAll(/\[([^\[\]\n]{1,60})\]/g)) {
+      const r = REFS.get(m[1].trim().toLowerCase());
+      out += esc(text.slice(last, m.index)) + (r
+        ? `<span class="ref" tabindex="0" data-ref="${esc(r.name.toLowerCase())}">${esc(m[1])}</span>`
+        : esc(m[0]));
+      last = m.index + m[0].length;
+    }
+    return out + esc(text.slice(last));
+  }
+  const noteField = (id, value, placeholder) => `
+    <div class="notefield">
+      <div class="note-view" tabindex="0" role="button" data-placeholder="${esc(placeholder)}">${renderNote(value)}</div>
+      <textarea class="notes" id="${id}" data-refs>${esc(value)}</textarea>
+    </div>`;
+
+  // Notes show rendered text with references; click (or Enter) to edit, leave to render again
+  function editNote(view) {
+    const field = view.parentElement, ta = field.querySelector("textarea");
+    field.classList.add("editing");
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+  }
+  document.addEventListener("click", e => {
+    const view = e.target.closest(".note-view");
+    if (view && !e.target.closest(".ref")) editNote(view);
+  });
+  document.addEventListener("keydown", e => {
+    if (e.target.matches(".note-view") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); editNote(e.target); }
+  });
+  document.addEventListener("focusout", e => {
+    if (!e.target.matches(".notefield textarea")) return;
+    e.target.parentElement.classList.remove("editing");
+    e.target.parentElement.querySelector(".note-view").innerHTML = renderNote(e.target.value);
+    acClose();
+  });
+
+  // Hover / focus card for references
+  const $tip = document.getElementById("hoverTip");
+  function showTip(el) {
+    const r = REFS.get(el.dataset.ref);
+    if (!r) return;
+    $tip.innerHTML = r.items.slice(0, 3).join("") + (r.items.length > 3 ? `<div class="more">+${r.items.length - 3} more with this name</div>` : "");
+    $tip.hidden = false;
+    const box = el.getBoundingClientRect(), w = $tip.offsetWidth, h = $tip.offsetHeight;
+    const below = box.bottom + 6 + h <= innerHeight || box.top - 6 - h < 0;
+    $tip.style.left = Math.max(8, Math.min(box.left, innerWidth - w - 8)) + "px";
+    $tip.style.top = Math.max(8, below ? box.bottom + 6 : box.top - 6 - h) + "px";
+  }
+  const hideTip = () => { $tip.hidden = true; };
+  document.addEventListener("mouseover", e => { const el = e.target.closest(".ref"); el ? showTip(el) : hideTip(); });
+  document.addEventListener("focusin", e => { if (e.target.matches(".ref")) showTip(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.matches(".ref")) hideTip(); });
+  window.addEventListener("scroll", hideTip, { passive: true });
+
+  // "[" autocomplete inside note textareas
+  const $ac = document.getElementById("refAc");
+  const REF_NAMES = [...REFS.values()].sort((a, b) => a.name.localeCompare(b.name));
+  let ac = null;   // { ta, start, items, idx }
+  function acClose() { ac = null; $ac.hidden = true; }
+  function caretXY(ta) {
+    const cs = getComputedStyle(ta), div = document.createElement("div"), mark = document.createElement("span");
+    for (const k of ["boxSizing", "width", "fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing",
+                     "paddingTop", "paddingRight", "paddingBottom", "paddingLeft",
+                     "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"]) div.style[k] = cs[k];
+    Object.assign(div.style, { position: "absolute", visibility: "hidden", whiteSpace: "pre-wrap", overflowWrap: "break-word", top: "0", left: "-9999px" });
+    div.textContent = ta.value.slice(0, ta.selectionStart);
+    mark.textContent = "​";
+    div.appendChild(mark);
+    document.body.appendChild(div);
+    const box = ta.getBoundingClientRect();
+    const xy = { x: box.left + mark.offsetLeft - ta.scrollLeft, y: box.top + mark.offsetTop - ta.scrollTop + mark.offsetHeight };
+    div.remove();
+    return xy;
+  }
+  function acUpdate(ta) {
+    const m = ta.value.slice(0, ta.selectionStart).match(/\[([^\[\]\n]{0,40})$/);
+    if (!m) return acClose();
+    const q = m[1].toLowerCase();
+    const items = [...REF_NAMES.filter(r => r.name.toLowerCase().startsWith(q)),
+                   ...REF_NAMES.filter(r => !r.name.toLowerCase().startsWith(q) && r.name.toLowerCase().includes(q))].slice(0, 8);
+    if (!items.length) return acClose();
+    ac = { ta, start: ta.selectionStart - m[0].length, items, idx: 0 };
+    acRender();
+    const { x, y } = caretXY(ta);
+    $ac.hidden = false;
+    $ac.style.left = Math.max(8, Math.min(x, innerWidth - $ac.offsetWidth - 8)) + "px";
+    $ac.style.top = (y + $ac.offsetHeight + 4 > innerHeight ? y - $ac.offsetHeight - 22 : y + 4) + "px";
+  }
+  function acRender() {
+    $ac.innerHTML = ac.items.map((r, i) =>
+      `<li role="option" data-i="${i}" class="${i === ac.idx ? "on" : ""}" aria-selected="${i === ac.idx}">${esc(r.name)}<small>${esc(r.kind)}</small></li>`).join("");
+  }
+  function acPick(i) {
+    const { ta, start } = ac, name = ac.items[i].name, end = ta.selectionStart;
+    ta.value = ta.value.slice(0, start) + `[${name}]` + ta.value.slice(end);
+    ta.setSelectionRange(start + name.length + 2, start + name.length + 2);
+    acClose();
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  document.addEventListener("input", e => { if (e.target.matches("textarea[data-refs]")) acUpdate(e.target); });
+  document.addEventListener("keydown", e => {
+    if (!ac || e.target !== ac.ta) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      ac.idx = (ac.idx + (e.key === "ArrowDown" ? 1 : ac.items.length - 1)) % ac.items.length;
+      acRender();
+    } else if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); acPick(ac.idx); }
+    else if (e.key === "Escape") acClose();
+  });
+  $ac.addEventListener("mousedown", e => {
+    const li = e.target.closest("li");
+    if (li) { e.preventDefault(); acPick(+li.dataset.i); }
+  });
+
+  // ── Master's Bestiary ───────────────────────────────────────────
+  const beastTable = document.getElementById("beastTable");
+  beastTable.insertAdjacentHTML("beforeend", BEASTS.map(([n]) => {
+    const b = BEAST[n];
+    const search = [b.name, b.class, b.affinity, b.damage, b.loc, b.trick.name, b.release.name, ...b.inflicts].join(" ").toLowerCase();
+    return `
+    <tbody class="beast" data-class="${b.class}" data-affinity="${b.affinity}" data-search="${esc(search)}">
+      <tr class="main" tabindex="0" aria-expanded="false" title="Show tooltips">
+        <td class="num">${n}</td>
+        <td class="portrait"><img src="${portrait(n)}" alt="" loading="lazy" /></td>
+        <td class="name">${esc(b.name)}</td>
+        <td><span class="kin ${b.class}">${cap(b.class)}</span></td>
+        <td><span class="aff"><img src="assets/ui/affinity-${b.affinity}.png" alt="" />${cap(b.affinity)}</span></td>
+        <td class="dmg">${esc(b.damage)}${b.inflicts.length ? `<small>${b.inflicts.map(esc).join(", ")}</small>` : ""}</td>
+        <td class="loc">${esc(b.loc)}</td>
+        <td class="abil">${esc(b.trick.name)}</td>
+        <td class="abil">${esc(b.release.name)}</td>
+      </tr>
+      <tr class="detail"><td colspan="9">
+        <p class="lore">${esc(b.lore)}</p>
+        <div class="tips">${tipCard(b.trick, { type: "Trick · Familiar Instinctual Skill" })}${tipCard(b.release, { type: "Tempered Release" })}</div>
+      </td></tr>
+    </tbody>`;
+  }).join(""));
+
+  beastTable.querySelectorAll("tr.main").forEach(tr => {
+    const toggle = () => tr.setAttribute("aria-expanded", tr.parentElement.classList.toggle("open"));
+    tr.addEventListener("click", toggle);
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
+
+  function filterBeasts() {
+    const q   = document.getElementById("beastSearch").value.toLowerCase();
+    const cls = document.getElementById("classFilter").value;
+    const aff = document.getElementById("affinityFilter").value;
+    beastTable.querySelectorAll("tbody.beast").forEach(body => {
+      const show = (!q || body.dataset.search.includes(q))
+                && (!cls || body.dataset.class === cls)
+                && (!aff || body.dataset.affinity === aff);
+      body.classList.toggle("hidden", !show);
+    });
+    updateCount();
+  }
+
+  function updateCount() {
+    const total   = beastTable.querySelectorAll("tbody.beast").length;
+    const visible = beastTable.querySelectorAll("tbody.beast:not(.hidden)").length;
+    document.getElementById("resultCount").textContent = `${visible}/${total}`;
+  }
+
+  const sortDir = {};
+  function sortTable(col) {
+    const bodies = [...beastTable.querySelectorAll("tbody.beast")];
+    sortDir[col] = !sortDir[col];
+    bodies.sort((a, b) => {
+      const av = a.rows[0].cells[col].textContent.trim();
+      const bv = b.rows[0].cells[col].textContent.trim();
+      const n  = Number(av) - Number(bv);
+      if (!isNaN(n)) return sortDir[col] ? n : -n;
+      return sortDir[col] ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    bodies.forEach(b => beastTable.appendChild(b));
+  }
+
+  // ── Run planner ─────────────────────────────────────────────────
+  // State lives in localStorage for convenience; Export/Import moves it between devices.
+  // Export string: "BST1." + base64url(deflate-raw(JSON)), or "BST0." + base64url(JSON)
+  // where CompressionStream is unavailable. Raw JSON is accepted on import too.
+  (function planner() {
+    const KEY = "bst-run-planner";
+    const $ = id => document.getElementById(id);
+    const boardById = id => boards.find(b => b.id === id);
+    const HORNS = ["First", "Second", "Third"];
+
+    let state = { board: boards[0].id, plans: {} };
+    let selId = null, drawnBoard = null;
+
+    const emptyPlan = () => ({ team: [], route: [], nodes: {}, notes: "", bonuses: [] });
+    const board = () => boardById(state.board);
+    const plan = () => state.plans[state.board] ||= emptyPlan();
+    const nodePlan = id => plan().nodes[id] || { horns: [null, null, null], note: "" };
+    function setNodePlan(id, np) {
+      if (np.horns.some(Boolean) || np.note) plan().nodes[id] = np;
+      else delete plan().nodes[id];
+    }
+    const isEmpty = p => !p.team.length && !p.route.length && !Object.keys(p.nodes).length && !p.notes && !p.bonuses.length;
+
+    // Bonus boosts: team-composition ones are worked out from the team; within a group only one
+    // can be earned per run (e.g. a single Degree, one Willing Sacrifice tier).
+    const TEAM_BONUS = name => /^Beast Squad|Gambit$/.test(name);
+    const BONUS_GROUP = name =>
+      /^(Willing Sacrifice|No Beast Left Behind)/.test(name) ? "incapacitated" :
+      /Degree$/.test(name) ? "degree" :
+      /^Infinity and Beyond/.test(name) ? "universality" :
+      /^(Nameday Attire|Walking Armory)$/.test(name) ? "gear" :
+      /^(Starve the Fever|Feed the Bold)$/.test(name) ? "feeding" : null;
+    function pickBonuses(b, names) {
+      const valid = new Set(b.bonuses.map(x => x.name)), groups = new Set(), out = [];
+      for (const name of names) {
+        const g = BONUS_GROUP(name);
+        if (!valid.has(name) || TEAM_BONUS(name) || out.includes(name) || (g && groups.has(g))) continue;
+        if (g) groups.add(g);
+        out.push(name);
+      }
+      return out;
+    }
+
+    // ── persistence ──
+    function snapshot() {
+      const plans = {};
+      for (const [id, p] of Object.entries(state.plans)) if (!isEmpty(p)) plans[id] = p;
+      return { app: "bst-crucible-planner", v: 1, board: state.board, plans };
+    }
+    let saveTimer, flashTimer;
+    function status(text, ms) {
+      clearTimeout(flashTimer);
+      $("planStatus").textContent = text;
+      if (ms) flashTimer = setTimeout(() => status(savedText), ms);
+    }
+    let savedText = "";
+    function save() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try {
+          localStorage.setItem(KEY, JSON.stringify(snapshot()));
+          savedText = "Saved in this browser";
+        } catch {
+          savedText = "Not saved here — use Export";
+        }
+        status(savedText);
+      }, 300);
+    }
+    function load() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) { state = normalize(JSON.parse(raw)); savedText = "Saved in this browser"; }
+      } catch { /* storage blocked or corrupt: start empty */ }
+    }
+
+    // ── validation: anything imported is untrusted ──
+    const ints = (a, ok) => Array.isArray(a) ? [...new Set(a.filter(v => Number.isInteger(v) && ok(v)))] : [];
+    const str = (v, max) => typeof v === "string" ? v.slice(0, max) : "";
+    function normalize(raw) {
+      if (!raw || typeof raw !== "object" || !raw.plans || typeof raw.plans !== "object")
+        throw new Error("That doesn't look like a run plan export.");
+      const out = { board: boardById(raw.board) ? raw.board : boards[0].id, plans: {} };
+      for (const b of boards) {
+        const p = raw.plans[b.id];
+        if (!p || typeof p !== "object") continue;
+        const ids = new Set(b.nodes.map(n => n.id));
+        const team = ints(p.team, n => !!BEAST[n]).slice(0, b.teamSize);
+        const nodes = {};
+        for (const [k, v] of Object.entries(p.nodes && typeof p.nodes === "object" ? p.nodes : {})) {
+          if (!ids.has(+k) || !v || typeof v !== "object") continue;
+          const horns = [null, null, null];
+          (Array.isArray(v.horns) ? v.horns : []).slice(0, 3).forEach((h, i) => {
+            if (team.includes(h) && !horns.includes(h)) horns[i] = h;
+          });
+          const note = str(v.note, 4000);
+          if (horns.some(Boolean) || note) nodes[+k] = { horns, note };
+        }
+        // a route is a path up the board from the start: keep the valid prefix
+        const route = [];
+        for (const id of ints(p.route, id => ids.has(id)).sort((a, c) => b.nodes[a].move - b.nodes[c].move)) {
+          if (!nextSpaces(b, route.length ? route[route.length - 1] : 0).includes(id)) break;
+          route.push(id);
+        }
+        const bonuses = pickBonuses(b, Array.isArray(p.bonuses) ? p.bonuses.filter(x => typeof x === "string") : []);
+        out.plans[b.id] = { team, route, nodes, notes: str(p.notes, 20000), bonuses };
+      }
+      return out;
+    }
+
+    // ── export string encoding ──
+    const toB64 = bytes => {
+      let s = "";
+      for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    };
+    const fromB64 = s => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+    const pipe = async (bytes, stream) => new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+
+    async function encode(obj) {
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      if (window.CompressionStream) return "BST1." + toB64(await pipe(bytes, new CompressionStream("deflate-raw")));
+      return "BST0." + toB64(bytes);
+    }
+    async function decode(text) {
+      text = text.trim().replace(/^.*#plan=/, "");
+      if (text.startsWith("{")) return JSON.parse(text);
+      const m = text.match(/^BST([01])\.([A-Za-z0-9_-]+)$/);
+      if (!m) throw new Error("Paste an export string (starts with BST1.) or the contents of an exported .json file.");
+      let bytes = fromB64(m[2]);
+      if (m[1] === "1") {
+        if (!window.DecompressionStream) throw new Error("This browser can't read compressed plans; export as .json instead.");
+        bytes = await pipe(bytes, new DecompressionStream("deflate-raw"));
+      }
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+    function applyImport(raw) {
+      const s = normalize(raw);
+      const ids = Object.keys(s.plans);
+      if (!ids.length) throw new Error("No board plans found in that export.");
+      Object.assign(state.plans, s.plans);
+      state.board = s.board;
+      selId = null;
+      renderAll();
+      save();
+      return ids.length;
+    }
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; } catch {
+        const ta = Object.assign(document.createElement("textarea"), { value: text });
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand("copy"); ta.remove();
+        return ok;
+      }
+    }
+
+    // ── team ──
+    function teamBonuses(b, team) {
+      if (!team.length) return [];
+      const classes = new Set(team.map(n => BEAST[n].class));
+      return b.bonuses.filter(x => {
+        const kin = x.name.match(/^(\w+)kin Gambit$/);
+        if (kin) return classes.size === 1 && classes.has(kin[1].toLowerCase() + "kin");
+        const size = x.desc.match(/team of (\d+) (?:or|to) (\d+) familiars/);
+        return !!size && team.length >= +size[1] && team.length <= +size[2];
+      });
+    }
+    const beastSlot = (n, attrs, title) => {
+      const x = BEAST[n];
+      return `<button type="button" class="slot" ${attrs} title="${esc(title)}"><img src="${portrait(n)}" alt="" />
+        <b>${esc(x.name)}</b><span class="meta"><img src="assets/ui/affinity-${x.affinity}.png" alt="" />
+        <span class="kin ${x.class}">${cap(x.class)}</span></span></button>`;
+    };
+
+    function renderTeam() {
+      const b = board(), team = plan().team;
+      $("teamTally").textContent = `${team.length} / ${b.teamSize}`;
+      $("teamSlots").innerHTML = Array.from({ length: b.teamSize }, (_, i) => team[i]
+        ? beastSlot(team[i], `data-n="${team[i]}"`, `Remove ${BEAST[team[i]].name} from the team`)
+        : `<div class="slot empty">Empty</div>`).join("");
+      const aff = {};
+      team.forEach(n => aff[BEAST[n].affinity] = (aff[BEAST[n].affinity] || 0) + 1);
+      $("teamSum").innerHTML = team.length
+        ? AFFINITIES.map(a => `<span class="aff" title="${cap(a)}"><img src="assets/ui/affinity-${a}.png" alt="${cap(a)}" />${aff[a] || 0}</span>`).join("") +
+          `<span>Trick types: ${[...new Set(team.map(n => BEAST[n].damage))].map(esc).join(", ")}</span>`
+        : `<span class="empty-state">No familiars yet. Choose up to ${b.teamSize} below.</span>`;
+      $("teamBonus").innerHTML = teamBonuses(b, team).map(x =>
+        `<li title="${esc(x.desc)}">${esc(x.name)} +${x.points.toLocaleString()}</li>`).join("");
+    }
+
+    function renderPicker() {
+      const team = plan().team;
+      $("beastPick").querySelectorAll(".pick").forEach(el => {
+        const on = team.includes(+el.dataset.n);
+        el.classList.toggle("on", on);
+        el.setAttribute("aria-pressed", on);
+      });
+    }
+    function filterPicker() {
+      const q = $("pickSearch").value.toLowerCase(), cls = $("pickClass").value;
+      $("beastPick").querySelectorAll(".pick").forEach(el =>
+        el.classList.toggle("hidden", !((!q || el.dataset.search.includes(q)) && (!cls || el.dataset.class === cls))));
+    }
+
+    function toggleTeam(n) {
+      const p = plan(), b = board(), i = p.team.indexOf(n);
+      if (i >= 0) {
+        p.team.splice(i, 1);
+        for (const [id, np] of Object.entries(p.nodes)) setNodePlan(id, { ...np, horns: np.horns.map(h => h === n ? null : h) });
+      } else if (p.team.length >= b.teamSize) {
+        return status(`Team is full: ${b.teamSize} familiars on this board`, 2500);
+      } else p.team.push(n);
+      changed();
+    }
+
+    // ── map + selected space ──
+    function renderMap() {
+      const b = board();
+      if (drawnBoard !== b.id) { drawNodes($("planMap"), b, select); drawnBoard = b.id; }
+      decorateMap();
+    }
+    function decorateMap() {
+      const b = board(), p = plan();
+      const chain = [0, ...p.route], next = nextSpaces(b, chain[chain.length - 1]);
+      drawEdges($("planLines"), b, new Set(p.route.map((id, i) => `${chain[i]}-${id}`)));
+      $("planMap").querySelectorAll(".node").forEach(el => {
+        const id = +el.dataset.id;
+        el.classList.toggle("route", p.route.includes(id));
+        el.classList.toggle("next", next.includes(id));
+        el.classList.toggle("noted", !!p.nodes[id]);
+        el.classList.toggle("sel", id === selId);
+      });
+    }
+    function select(id, scroll) {
+      selId = id;
+      decorateMap();
+      renderNode();
+      if (scroll) $("planNode").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function renderNode() {
+      const b = board(), p = plan();
+      if (b.nodes[selId] == null) selId = b.nodes.find(n => n.type === "boss").id;
+      const n = b.nodes[selId], np = nodePlan(n.id), foes = nodeEnemies(n);
+      const weak = new Set(foes.map(e => e.weakness).filter(Boolean));
+      const vuln = new Set(foes.flatMap(e => e.vulnerable));
+
+      let html = `<div class="detail-head"><img src="${ICON(n.type)}" alt="" />
+        <h3>${n.move ? `Move ${n.move} · ` : ""}${esc(LABEL[n.type])}<small>${esc(summary(n))}</small></h3></div>`;
+      if (n.type !== "start")
+        html += `<label class="check"><input type="checkbox" id="pnRoute" ${p.route.includes(n.id) ? "checked" : ""} /> On my route</label>`;
+
+      if (foes.length) {
+        html += `<div class="foes">${foes.map(e => `
+          <div class="foe"><img src="assets/icons/enemies/${e.icon}.png" alt="" loading="lazy" /><b>${esc(e.name)}</b>
+            <span><span class="weak">Weakness: <b>${esc(e.weakness) || "None"}</b></span> ·
+            <span class="chips">${e.vulnerable.map(s => `<span>${esc(s)}</span>`).join("") || "No status vulnerabilities"}</span></span>
+          </div>`).join("")}</div>`;
+
+        html += `<span class="field-label">Battlehorns</span><div class="horns">${HORNS.map((label, i) => `
+          <div class="horn"><div class="horn-label"><img src="assets/icons/actions/${3941 + i}.png" alt="" />${label} Battlehorn</div>
+            ${np.horns[i] ? beastSlot(np.horns[i], `data-slot="${i}"`, "Clear this battlehorn") : `<div class="slot empty">Empty</div>`}
+          </div>`).join("")}</div>`;
+
+        if (p.team.length) {
+          const rows = p.team.map(t => {
+            const x = BEAST[t], hits = [];
+            if (weak.has(x.damage)) hits.push(`<span class="w">${esc(x.damage)}</span>`);
+            x.inflicts.filter(s => vuln.has(s)).forEach(s => hits.push(`<span>${esc(s)}</span>`));
+            return { t, x, hits };
+          }).sort((a, c) => c.hits.length - a.hits.length);
+          html += `<span class="field-label">Team matchups
+              <small class="note">· red hits a weakness, green is a status they're vulnerable to · click to assign</small></span>
+            <div class="matchups">${rows.map(({ t, x, hits }) => `
+              <button type="button" class="mchip${np.horns.includes(t) ? " on" : ""}" data-n="${t}">
+                <img src="${portrait(t)}" alt="" /><b>${esc(x.name)}</b>
+                <span class="chips">${hits.join("") || `<span class="none">${esc(x.damage)}</span>`}</span>
+              </button>`).join("")}</div>`;
+        } else html += `<p class="empty-state">Add familiars to your team to assign battlehorns.</p>`;
+      }
+      html += `<label class="field-label" for="pnNote">Notes<span class="field-hint">type [ to reference an action, beast or enemy</span></label>
+        ${noteField("pnNote", np.note, "Click to add notes: opener, which familiar to swap to, what to interrupt…")}`;
+      $("planNode").innerHTML = html;
+    }
+
+
+    // Score estimate for the route. Moves Made is a flat 5,000 for a cleared board; enemies,
+    // elites and the boss add fixed points; random spaces only count if they roll a fight, so
+    // they're left out of the minimum. Remaining HP and Bonus Boost depend on the run itself.
+    const SPACE_POINTS = { enemy: 250, elite: 800, boss: 1000 };
+    function renderScore() {
+      const b = board(), p = plan(), spaces = p.route.map(id => b.nodes[id]);
+      const count = t => spaces.filter(n => n.type === t).length;
+      const randomMax = spaces.filter(n => n.type === "random")
+        .reduce((sum, n) => sum + Math.max(0, ...n.options.map(o => SPACE_POINTS[o.type] || 0)), 0);
+      const cleared = count("boss") > 0;
+      const rows = [
+        ["Moves Made", cleared ? "" : "on clearing the board", 5000],
+        ["Enemy", `${count("enemy")} × 250`, count("enemy") * 250],
+        ["Elite Enemy", `${count("elite")} × 800`, count("elite") * 800],
+        ["Boss", cleared ? "" : "route doesn't reach the boss yet", cleared ? 1000 : 0],
+      ];
+      const min = rows.reduce((sum, r) => sum + r[2], 0);
+      const fromTeam = new Set(teamBonuses(b, p.team).map(x => x.name));
+      const chosen = b.bonuses.filter(x => fromTeam.has(x.name) || p.bonuses.includes(x.name));
+      const boost = chosen.reduce((sum, x) => sum + x.points, 0);
+      const fmt = n => n.toLocaleString();
+      const row = (k, calc, v, cls = "") => `<dt class="${cls}">${k}</dt><dd class="calc ${cls}">${calc}</dd><dd class="pts ${cls}">${v}</dd>`;
+      const rule = `<hr class="rule" />`;
+      $("scoreRows").innerHTML =
+        rows.map(([k, calc, v]) => row(k, calc, fmt(v))).join("") +
+        (randomMax ? row("Random spaces", "only if they roll a fight", `up to +${fmt(randomMax)}`, "muted") : "") +
+        row("Remaining HP", "varies", "—", "muted") + rule +
+        row("Minimum", "without bonuses", fmt(min)) +
+        row("Bonus Boost", chosen.length ? `${chosen.length} chosen` : "none chosen", `+${fmt(boost)}`) + rule +
+        row("Simulated Score", "", fmt(min + boost), "total");
+      $("boostCount").textContent = `${chosen.length} of ${b.bonuses.length}`;
+      $("boostPicked").innerHTML = chosen.map(x =>
+        `<li title="${esc(x.desc)}">${esc(x.name)} <span>+${fmt(x.points)}</span></li>`).join("");
+
+      // The list is built once per board and then only re-synced, so ticking a box keeps your place
+      const $list = $("boostList");
+      if ($list.dataset.board !== String(b.id)) {
+        $list.dataset.board = b.id;
+        $list.innerHTML = b.bonuses.map(x => `<li><label>
+            <input type="checkbox" data-bonus="${esc(x.name)}" ${TEAM_BONUS(x.name) ? "disabled" : ""} />
+            <span><b>${esc(x.name)}</b>${TEAM_BONUS(x.name) ? " <em></em>" : ""}<small>${esc(x.desc)}</small></span>
+            <span class="pts">+${fmt(x.points)}</span></label></li>`).join("");
+      }
+      $list.querySelectorAll("input").forEach(input => {
+        const name = input.dataset.bonus, team = TEAM_BONUS(name);
+        const on = team ? fromTeam.has(name) : p.bonuses.includes(name);
+        input.checked = on;
+        input.closest("li").classList.toggle("on", on);
+        if (team) input.closest("li").querySelector("em").textContent = on ? "from your team" : "set by your team";
+      });
+    }
+    $("boostList").addEventListener("change", e => {
+      const name = e.target.dataset.bonus;
+      if (!name) return;
+      const p = plan(), b = board(), g = BONUS_GROUP(name);
+      p.bonuses = e.target.checked
+        ? pickBonuses(b, [name, ...p.bonuses.filter(x => !g || BONUS_GROUP(x) !== g)])
+        : p.bonuses.filter(x => x !== name);
+      save(); renderScore();
+    });
+
+    function renderAll() {
+      $("planBoard").querySelectorAll("button").forEach(btn => btn.setAttribute("aria-pressed", +btn.dataset.id === state.board));
+      renderTeam(); renderPicker(); renderMap(); renderNode(); renderScore();
+    }
+    function changed() {
+      save();
+      renderTeam(); renderPicker(); decorateMap(); renderNode(); renderScore();
+    }
+
+    // ── static UI ──
+    $("planBoard").innerHTML = boards.map(b =>
+      `<button type="button" class="pill" data-id="${b.id}" aria-pressed="false">${esc(b.name)}</button>`).join("");
+    $("pickClass").insertAdjacentHTML("beforeend", CLASSES.map(c => `<option value="${c}">${cap(c)}</option>`).join(""));
+    $("beastPick").innerHTML = BEASTS.map(([n]) => {
+      const x = BEAST[n];
+      const search = [x.name, x.class, x.affinity, x.damage, x.trick.name, x.release.name, ...x.inflicts].join(" ").toLowerCase();
+      const title = `${x.name} · ${cap(x.class)} · ${cap(x.affinity)} · ${x.damage}` + (x.inflicts.length ? ` · inflicts ${x.inflicts.join(", ")}` : "");
+      return `<button type="button" class="pick" data-n="${n}" data-class="${x.class}" data-search="${esc(search)}" title="${esc(title)}">
+        <img src="${portrait(n)}" alt="" loading="lazy" />${esc(x.name)}</button>`;
+    }).join("");
+
+    // ── events ──
+    $("planBoard").addEventListener("click", e => {
+      const btn = e.target.closest("button[data-id]");
+      if (btn) { state.board = +btn.dataset.id; selId = null; renderAll(); save(); }
+    });
+    $("pickSearch").addEventListener("input", filterPicker);
+    $("pickClass").addEventListener("change", filterPicker);
+    $("beastPick").addEventListener("click", e => { const el = e.target.closest(".pick"); if (el) toggleTeam(+el.dataset.n); });
+    $("teamSlots").addEventListener("click", e => { const el = e.target.closest(".slot[data-n]"); if (el) toggleTeam(+el.dataset.n); });
+
+    // Paths from one space to another, following edges up the board (stops after 2: we only need uniqueness)
+    function pathsBetween(b, from, to) {
+      const found = [];
+      (function walk(id, acc) {
+        for (const c of nextSpaces(b, id)) {
+          if (found.length > 1) return;
+          if (c === to) found.push([...acc, c]);
+          else if (b.nodes[c].move < b.nodes[to].move) walk(c, [...acc, c]);
+        }
+      })(from, []);
+      return found;
+    }
+
+    // The route is one committed path from the start. Adding a space extends it (filling in the
+    // spaces between when there is only one way there) or switches to another branch from the
+    // last fork it can be reached from; removing a space also drops everything after it.
+    function setRoute(id, on) {
+      const b = board(), p = plan();
+      if (!on) {
+        const i = p.route.indexOf(id);
+        if (i < 0) return;
+        const dropped = p.route.length - i - 1;
+        p.route = p.route.slice(0, i);
+        if (dropped) status(`Also removed ${plural(dropped, "later space")} from the route`, 3000);
+      } else if (!p.route.includes(id)) {
+        const chain = [0, ...p.route];
+        let k = chain.length - 1, paths = [];
+        for (; k >= 0 && !(paths = pathsBetween(b, chain[k], id)).length; k--);
+        if (k < 0) status("That space can't be reached from your route", 3000);
+        else if (paths.length > 1) status("More than one path leads there: add a space in between first", 3000);
+        else {
+          if (k < chain.length - 1) status(`Switched branch: dropped ${plural(chain.length - 1 - k, "space")} from the old path`, 3000);
+          p.route = [...chain.slice(1, k + 1), ...paths[0]];
+        }
+      }
+      save(); decorateMap(); renderNode(); renderScore();
+    }
+    $("planNode").addEventListener("change", e => { if (e.target.id === "pnRoute") setRoute(selId, e.target.checked); });
+    // Right-click a space to add it to / remove it from the route
+    $("planMap").addEventListener("contextmenu", e => {
+      const el = e.target.closest(".node");
+      if (!el) return;
+      e.preventDefault();
+      const id = +el.dataset.id;
+      if (board().nodes[id].type === "start") return;
+      selId = id;
+      setRoute(id, !plan().route.includes(id));
+    });
+    $("planNode").addEventListener("input", e => {
+      if (e.target.id !== "pnNote") return;
+      setNodePlan(selId, { ...nodePlan(selId), note: e.target.value.slice(0, 4000) });
+      save(); decorateMap();
+    });
+    $("planNode").addEventListener("click", e => {
+      const slot = e.target.closest(".slot[data-slot]"), chip = e.target.closest(".mchip");
+      const np = nodePlan(selId), horns = [...np.horns];
+      if (slot) horns[+slot.dataset.slot] = null;
+      else if (chip) {
+        const n = +chip.dataset.n, i = horns.indexOf(n);
+        if (i >= 0) horns[i] = null;
+        else if (horns.includes(null)) horns[horns.indexOf(null)] = n;
+        else return status("All three battlehorns are set; clear one first", 2500);
+      } else return;
+      setNodePlan(selId, { ...np, horns });
+      changed();
+    });
+
+
+    $("planReset").addEventListener("click", () => {
+      if (isEmpty(plan()) || !confirm(`Clear your plan for ${board().name}? Export first if you want to keep it.`)) return;
+      delete state.plans[state.board];
+      renderAll(); save();
+    });
+
+    // ── export / import dialog ──
+    const dlg = $("planDialog");
+    function dlgMsg(text, err) { $("dlgMsg").textContent = text; $("dlgMsg").className = "msg" + (err ? " err" : ""); }
+    function openDialog(mode) {
+      dlgMsg("");
+      const ta = $("dlgText");
+      if (mode === "export") {
+        $("dlgTitle").textContent = "Export Plans";
+        $("dlgHelp").textContent = "Copy this string somewhere safe, or download it as a .json file. Import it later, on any device, to restore your plans for every board.";
+        ta.readOnly = true; ta.value = "Encoding…";
+        encode(snapshot()).then(s => { ta.value = s; ta.select(); });
+        $("dlgButtons").innerHTML = `<button type="button" class="pill" data-act="copy">Copy</button>
+          <button type="button" class="pill" data-act="download">Download .json</button><span class="spacer"></span>
+          <button type="button" class="pill" data-act="close">Close</button>`;
+      } else {
+        $("dlgTitle").textContent = "Import Plans";
+        $("dlgHelp").textContent = "Paste an export string, a share link or exported JSON, or load a file. Boards in the import replace your current plans for those boards; your other boards are kept.";
+        ta.readOnly = false; ta.value = "";
+        $("dlgButtons").innerHTML = `<button type="button" class="pill" data-act="file">Load file…</button><span class="spacer"></span>
+          <button type="button" class="pill" data-act="close">Cancel</button>
+          <button type="button" class="pill gold" data-act="import" style="font-size:.85rem;padding:2px 22px 3px">Import</button>`;
+      }
+      dlg.showModal();
+    }
+    $("dlgButtons").addEventListener("click", async e => {
+      const act = e.target.closest("[data-act]")?.dataset.act;
+      if (act === "close") dlg.close();
+      if (act === "copy") dlgMsg(await copyText($("dlgText").value) ? "Copied to clipboard." : "Couldn't copy; select the text and copy it manually.", false);
+      if (act === "download") {
+        const url = URL.createObjectURL(new Blob([JSON.stringify(snapshot(), null, 2)], { type: "application/json" }));
+        Object.assign(document.createElement("a"), { href: url, download: "bst-run-plan.json" }).click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      if (act === "file") $("dlgFile").click();
+      if (act === "import") {
+        try {
+          const n = applyImport(await decode($("dlgText").value));
+          dlg.close();
+          status(`Imported plans for ${plural(n, "board")}`, 3000);
+        } catch (err) { dlgMsg(err instanceof SyntaxError ? "That text couldn't be read as a plan." : err.message, true); }
+      }
+    });
+    $("dlgFile").addEventListener("change", async e => {
+      const file = e.target.files[0];
+      if (file) { $("dlgText").value = await file.text(); dlgMsg(`Loaded ${file.name}. Press Import to apply it.`); }
+      e.target.value = "";
+    });
+    $("planExport").addEventListener("click", () => openDialog("export"));
+    $("planImport").addEventListener("click", () => openDialog("import"));
+    $("planShare").addEventListener("click", async () => {
+      const url = location.href.split("#")[0] + "#plan=" + await encode(snapshot());
+      status(await copyText(url) ? "Share link copied" : "Couldn't copy the link", 3000);
+    });
+
+    // ── start ──
+    load();
+    renderAll();
+    if (location.hash.startsWith("#plan=")) {
+      decode(location.hash).then(raw => {
+        const s = normalize(raw), names = Object.keys(s.plans).map(id => boardById(+id).name);
+        history.replaceState(null, "", "#planner");
+        if (names.length && confirm(`Load the shared run plan for ${names.join(", ")}? It replaces your plans for ${names.length === 1 ? "that board" : "those boards"}.`)) {
+          applyImport(raw);
+          $("planner").scrollIntoView();
+        }
+      }).catch(() => status("The shared link couldn't be read", 4000));
+    }
+  })();
+
+  // ── Side-nav highlight on scroll ────────────────────────────────
+  const navLinks = document.querySelectorAll("#sideNav a");
+  const sections = [...navLinks].map(a => document.querySelector(a.getAttribute("href")));
+  window.addEventListener("scroll", () => {
+    let cur = sections[0].id;
+    for (const s of sections) if (s.getBoundingClientRect().top < 140) cur = s.id;
+    navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + cur));
+  }, { passive: true });
+</script>
+</body>
+</html>
