@@ -343,11 +343,12 @@
     }
     .board-tabs button { padding: 4px 18px 5px; font-size: .88rem; }
 
-    /* wide: list | map | details; medium: list | map over details; narrow: stacked */
+    /* crucible: stats over details | map; planner wide: team | space | map; narrower: stacked */
     .crucible, .planner { display: grid; gap: 22px; align-items: start; }
     .crucible {
-      grid-template-columns: minmax(260px, 360px) minmax(0, 640px) minmax(0, 1fr);
-      grid-template-areas: "side map detail";
+      grid-template-columns: minmax(0, 1fr) minmax(0, 640px);
+      grid-template-areas: "side map" "detail map";
+      grid-template-rows: auto 1fr;
     }
     .planner {
       grid-template-columns: minmax(300px, 1fr) minmax(340px, 1fr) minmax(0, 600px);
@@ -356,12 +357,12 @@
     .crucible .board-side { grid-area: side; }
     .crucible .board-map, .planner .plan-map { grid-area: map; }
     .crucible .node-detail { grid-area: detail; margin-top: 0; }
-    .planner .plan-team { grid-area: team; }
+    .planner .plan-team { grid-area: team; align-self: start; }
     .planner .plan-node { grid-area: node; margin-top: 0; }
     .crucible .node-detail .enemies { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
     @media (max-width: 1799px) {
-      .crucible { grid-template-columns: minmax(0, 1fr) minmax(0, 600px); grid-template-areas: "side map" "detail detail"; }
-      .planner { grid-template-columns: minmax(0, 1fr) minmax(0, 560px); grid-template-areas: "team map" "node map"; }
+      /* selected space first, team under it; the last row takes up the map's extra height */
+      .planner { grid-template-columns: minmax(0, 1fr) minmax(0, 560px); grid-template-areas: "node map" "team map"; grid-template-rows: auto 1fr; }
     }
 
     .board-stats {
@@ -373,16 +374,12 @@
     .board-stats dd { color: var(--ink); }
 
     .board-side { display: flex; flex-direction: column; min-width: 0; }
-    .move-list { max-height: 520px; overflow-y: auto; padding: 3px 6px 3px 3px; }
-    .move-list::-webkit-scrollbar { width: 8px; }
-    .move-list::-webkit-scrollbar-thumb { background: #a3957b; border-radius: 4px; }
-    .move-list .move { cursor: pointer; }
-    .move-list .move:hover .move-body { background: rgba(255,255,255,.18); }
-    .move-list .move.sel { border-color: #b8923e; box-shadow: 0 0 0 2px rgba(214,170,80,.7), inset 0 1px 0 rgba(255,255,255,.45); }
-    .move-list .move.sub { margin-top: -7px; border-top-left-radius: 0; border-top-right-radius: 0; border-top-color: rgba(168,153,125,.5); }
-    .move-list .move:focus-visible { outline: 2px solid var(--gold-line); outline-offset: 1px; }
-    .move-list .move-body { padding: 6px 10px; min-height: 48px; }
-    .move-list .move-body > img { width: 38px; height: 38px; }
+    .board-side .board-stats { margin-bottom: 0; }
+    .map-hint {
+      position: absolute; top: 8px; left: 8px; z-index: 2; pointer-events: none;
+      font-size: .76rem; color: #f4ecdc; padding: 2px 11px 3px; border-radius: 999px;
+      background: rgba(58, 47, 37, .78); text-shadow: 0 1px 1px rgba(0,0,0,.5);
+    }
 
     .board-map {
       position: relative;
@@ -598,6 +595,15 @@
     button.pill:focus-visible { outline: 2px solid var(--gold-line); outline-offset: 2px; }
     button.pill.danger { background: linear-gradient(#a8574d, #7c3229 55%, #6c2a22); border-color: #4a1c16; }
     .toolbar .spacer { flex: 1; }
+    /* overlaid in the map's top corners; the top centre stays clear for the Third Board's boss */
+    .map-tools { position: absolute; top: 8px; z-index: 2; display: flex; gap: 5px; }
+    .map-tools.left { left: 8px; }
+    .map-tools.right { right: 8px; }
+    .map-tools .pill { font-size: .74rem; padding: 2px 11px 3px; }
+    @media (max-width: 560px) {
+      .map-tools.left { flex-direction: column; align-items: flex-start; }
+      .map-tools .pill { font-size: .7rem; padding: 1px 9px 2px; }
+    }
 
     /* ─── Run planner ─────────────────────────────────────────────── */
     .sub .tally { font-size: .9rem; color: var(--ink-soft); margin-left: 6px; }
@@ -772,8 +778,8 @@
 
     /* ─── Responsive ──────────────────────────────────────────────── */
     @media (max-width: 1000px) {
-      .crucible { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "side" "detail"; }
-      .planner { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "team" "node"; }
+      .crucible { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "side" "detail"; grid-template-rows: none; }
+      .planner { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "node" "team"; grid-template-rows: none; }
     }
     @media (max-width: 860px) {
       .shell { grid-template-columns: minmax(0, 1fr); }
@@ -947,9 +953,10 @@
       <div class="crucible">
         <div class="board-side">
           <dl class="board-stats" id="boardStats"></dl>
-          <div class="move-list" id="moveList"></div>
         </div>
-        <div class="board-map" id="boardMap"><svg id="boardLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+        <div class="board-map" id="boardMap"><svg id="boardLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+          <div class="map-hint">Click a space to view its details</div>
+        </div>
         <div class="node-detail" id="nodeDetail" aria-live="polite"></div>
       </div>
 
@@ -979,11 +986,6 @@
       </p>
       <div class="toolbar">
         <div class="board-tabs" id="planBoard" role="group" aria-label="Board" style="margin:0"></div>
-        <span class="spacer"></span>
-        <button type="button" class="pill" id="planExport">Export</button>
-        <button type="button" class="pill" id="planImport">Import</button>
-        <button type="button" class="pill" id="planShare">Copy share link</button>
-        <button type="button" class="pill danger" id="planReset">Clear board</button>
       </div>
 
       <div class="planner">
@@ -1013,7 +1015,16 @@
           </details>
         </div>
         <div class="plan-map">
-          <div class="board-map" id="planMap"><svg id="planLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+          <div class="board-map" id="planMap"><svg id="planLines" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            <div class="map-tools left">
+              <button type="button" class="pill" id="planExport">Export</button>
+              <button type="button" class="pill" id="planImport">Import</button>
+              <button type="button" class="pill" id="planShare">Copy share link</button>
+            </div>
+            <div class="map-tools right">
+              <button type="button" class="pill danger" id="planReset">Clear board</button>
+            </div>
+          </div>
           <p class="note" style="text-align:center;margin-top:8px">
             Click a space to plan it. <strong>Right-click</strong> to add it to your route or remove it.
             Gold rings mark your route, dashed rings the next possible spaces; pins mark notes.
@@ -1259,7 +1270,6 @@
 
     const $list = document.getElementById("boardList");
     const $stats = document.getElementById("boardStats");
-    const $moves = document.getElementById("moveList");
     const $map = document.getElementById("boardMap");
     const $lines = document.getElementById("boardLines");
     const $detail = document.getElementById("nodeDetail");
@@ -1312,9 +1322,6 @@
     function select(id, updateHash = true) {
       if (updateHash) history.replaceState(null, "", `#board-${board.id}-${id}`);
       $map.querySelectorAll(".node").forEach(el => el.classList.toggle("sel", +el.dataset.id === id));
-      $moves.querySelectorAll(".move").forEach(el => el.classList.toggle("sel", +el.dataset.id === id));
-      const row = $moves.querySelector(`.move[data-id="${id}"]`);
-      if (row) $moves.scrollTop = Math.max(0, row.offsetTop - $moves.offsetTop - 40);
       renderDetail(board.nodes[id]);
     }
 
@@ -1331,20 +1338,6 @@
       drawEdges($lines, b);
       drawNodes($map, b, id => select(id));
 
-      // move list, top of the board first (like the in-game Board Layout)
-      const sorted = b.nodes.filter(n => n.type !== "start").sort((p, q) => q.move - p.move || q.id - p.id);
-      $moves.innerHTML = sorted.map((n, i) => {
-        const first = i === 0 || sorted[i - 1].move !== n.move;
-        return `<div class="move${first ? "" : " sub"}" data-id="${n.id}" tabindex="0" role="button">
-          ${first ? `<div class="move-head">Move ${n.move}</div>` : ""}
-          <div class="move-body"><img src="${ICON(n.type)}" alt="" /><div class="txt">${esc(summary(n))}</div></div>
-        </div>`;
-      }).join("");
-      $moves.querySelectorAll(".move").forEach(el => {
-        const go = () => select(+el.dataset.id);
-        el.addEventListener("click", go);
-        el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
-      });
 
       document.getElementById("bonusSummary").textContent = `${b.bonuses.length} available on this board`;
       document.getElementById("bonusList").innerHTML = b.bonuses.map(x =>
