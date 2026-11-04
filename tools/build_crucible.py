@@ -30,6 +30,10 @@ ATTACK_TYPES = {"斬": "Slashing", "突": "Piercing", "打": "Blunt", "射": "Sh
                 "ブレス": "Breath", "音波": "Sound", "限界技": "Limit Break", "無": "Unaspected"}
 
 
+# Bonus points that differ in-game from the XBMContent values (reported by players)
+POINT_OVERRIDES = {"Sleepless Survival": 1000}
+
+
 def get(path, **params):
     url = f"{API}/{path}?" + urllib.parse.urlencode(params)
     return json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60))
@@ -165,7 +169,8 @@ def main():
             "teamSize": u(c, 34),
             "recommendedRank": u(c, 35) - 2,
             "syncRank": u(c, 36),
-            "bonuses": [{**bonuses[i], "points": u(c, i)} for i in range(33) if u(c, i)],
+            "bonuses": [{**bonuses[i], "points": POINT_OVERRIDES.get(bonuses[i]["name"], u(c, i))}
+                        for i in range(33) if u(c, i)],
             "nodes": nodes,
             "edges": sorted(edges[b]),
         })
